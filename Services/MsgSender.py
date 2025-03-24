@@ -2,7 +2,7 @@ from kafka import KafkaConsumer, KafkaProducer, KafkaAdminClient
 from kafka.admin import NewTopic
 from kafka.errors import KafkaError, TopicAlreadyExistsError
 
-KAFKA_Broker = "broker:19092"
+KAFKA_Broker = 'kafka:9093'
 KAFKA_Topic = "test-topic"
 
 
@@ -21,23 +21,23 @@ KAFKA_Topic = "test-topic"
 
 
 # Producer instance
-try:
-    producer = KafkaProducer(
-        bootstrap_servers=KAFKA_Broker,
-        value_serializer=lambda v: v.encode('utf-8')
-    )
-except KafkaError as e:
-    print(f"Failed to create producer: {e}")
-    exit(1)
+# try:
+#     producer = KafkaProducer(
+#         bootstrap_servers=KAFKA_Broker,
+#         value_serializer=lambda v: v.encode('utf-8')
+#     )
+# except KafkaError as e:
+#     print(f"Failed to create producer: {e}")
+#     exit(1)
 
-# Send messages
-try:
-    producer.send(KAFKA_Topic, "Hello World")
-    producer.send(KAFKA_Topic, "Hello World2")
-    producer.flush()
-    print("Messages sent")
-except KafkaError as e:
-    print(f"Failed to send messages: {e}")
+# # Send messages
+# try:
+#     producer.send(KAFKA_Topic, "Hello World")
+#     producer.send(KAFKA_Topic, "Hello World2")
+#     producer.flush()
+#     print("Messages sent")
+# except KafkaError as e:
+#     print(f"Failed to send messages: {e}")
 
 """ 
 

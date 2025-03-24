@@ -2,7 +2,7 @@ from kafka import KafkaConsumer, KafkaProducer, KafkaAdminClient
 from kafka.admin import NewTopic
 from kafka.errors import KafkaError, TopicAlreadyExistsError
 
-KAFKA_Broker = "broker:19092"
+KAFKA_Broker = '172.18.0.3:9093'
 KAFKA_Topic = "test-topic"
 
 print("Creating topic...")
