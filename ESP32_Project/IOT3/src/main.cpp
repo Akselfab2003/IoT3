@@ -15,9 +15,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  ReadAllValues();
   ReadSensor();
   delay(1000);
-
 }
 
 // put function definitions here:
@@ -37,4 +37,9 @@ void ReadSensor(){
   {
     Serial.println("No Object Detected");
   }
+}
+
+void ReadAllValues(){
+  int lightValue = analogRead(SENSOR_PIN);
+  Serial.println(lightValue);
 }
