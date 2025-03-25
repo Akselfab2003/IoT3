@@ -62,15 +62,7 @@
     CheckIfPersonEntered();
     loop2();  
   }
-
-  // put function definitions here:
-  int myFunction(int x, int y) {
-    return x + y;
-  }
-
-
-
-  
+ 
 
   void updateDisplay(){
     display.clearDisplay();
