@@ -7,5 +7,3 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/")
 def index(request: Request):
     return templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!"})
-
-
