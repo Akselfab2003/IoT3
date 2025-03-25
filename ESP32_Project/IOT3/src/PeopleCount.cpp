@@ -13,7 +13,7 @@ enum MovementState {
 
 MovementState currentState = WAITING;
 unsigned long triggerTime = 0;
-const unsigned long timeWindow = 500; // Time window in milliseconds for a valid sequence
+const unsigned long   timeWindow = 500; // Time window in milliseconds for a valid sequence
 
 int peopleCount = 0;
 
@@ -179,6 +179,7 @@ void CheckIfPersonEntered() {
         peopleCount++;
         Serial.println("Person Entered");
         Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
+        delay(100);
         currentState = WAITING; // Reset state
       } else if (currentTime - triggerTime > timeWindow) {
         // Timeout: Reset state if second sensor is not triggered in time
@@ -195,6 +196,7 @@ void CheckIfPersonEntered() {
         }
         Serial.println("Person Exited");
         Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
+        delay(100);
         currentState = WAITING; // Reset state
       } else if (currentTime - triggerTime > timeWindow) {
         // Timeout: Reset state if first sensor is not triggered in time
