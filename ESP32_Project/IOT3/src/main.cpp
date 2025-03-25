@@ -58,7 +58,8 @@
 
     updateDisplay();
 
-    loop1();
+    //loop1();
+    CheckIfPersonEntered();
     loop2();  
     delay(500);
   }
