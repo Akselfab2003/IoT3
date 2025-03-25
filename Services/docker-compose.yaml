@@ -1,0 +1,69 @@
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka_network
+    restart: always
+
+  
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL=PLAINTEXT
+      - KAFKA_LISTENER_PORT=9093
+      - KAFKA_ADVERTISED_LISTENER=PLAINTEXT://localhost:9093
+      - KAFKA_LISTENER_NAME=PLAINTEXT
+      - KAFKA_LISTENER_INTERNAL_PORT=9092
+      - KAFKA_LISTENER_INTERNAL=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_OUTSIDE=PLAINTEXT://localhost:9093
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "9093:9093"
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka_network
+    restart: always
+
+  script:
+    image: python:3.9
+    container_name: script
+    volumes:
+      - C:/DEV/IoT3/Services:/app
+    working_dir: /app
+    command: ["sh", "-c", "pip install -r requirements.txt && python script.py"]
+    networks:
+      - kafka_network
+    depends_on:
+      - kafka
+    #restart: on-failure
+
+
+  MsgSender:
+    image: python:3.9
+    container_name: Msg
+    volumes:
+      - C:/DEV/IoT3/Services:/app
+    working_dir: /app
+    command: ["sh", "-c", "pip install -r requirements.txt && python MsgSender.py"]    
+    networks:
+      - kafka_network
+    depends_on:
+      - kafka
+    #restart: on-failure
+
+networks:
+  kafka_network:
+    driver: bridge
