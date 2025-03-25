@@ -1,7 +1,9 @@
 #include <esp32-hal-gpio.h>
 #include <HardwareSerial.h>
-const int sensorA = 34;   // Outside sensor (assumed to trigger first when entering)
-const int sensorB = 35;   // Inside sensor (assumed to trigger second when entering)
+#include <PeopleCount.h>
+
+#define SENSOR_PIN_Lose 34    
+#define SENSOR_PIN_Board 35
 
 enum MovementState {
   WAITING,
@@ -15,24 +17,29 @@ const unsigned long timeWindow = 500; // Time window in milliseconds for a valid
 
 int peopleCount = 0;
 
-void setup() {
-  Serial.begin(115200);
+void setup1() {
   // Use INPUT_PULLUP if sensors pull the line LOW when activated
-  pinMode(sensorA, INPUT_PULLUP);
-  pinMode(sensorB, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_Lose, INPUT);
+  pinMode(SENSOR_PIN_Board, INPUT);
   Serial.println("People counter system initialized.");
 }
 
-void loop() {
-  int stateA = digitalRead(sensorA);
-  int stateB = digitalRead(sensorB);
+void loop1() {
+  Serial.println("Loopi loop");
+  int stateA = digitalRead(SENSOR_PIN_Lose);
+  int stateB = digitalRead(SENSOR_PIN_Board);
   unsigned long currentTime = millis();
+
+  Serial.println("State A =" + stateA);
+  Serial.println("State B =" + stateB);
+  Serial.println("Current Time =" + currentTime);
 
   // Reset the state if the time window has expired
   if (currentState != WAITING && (currentTime - triggerTime > timeWindow)) {
     currentState = WAITING;
   }
 
+  Serial.println("Current State: " + currentState);
   if (currentState == WAITING) {
     if (stateA == LOW) {
       // Outside sensor triggered first

@@ -1,14 +1,14 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <MFRC522.h>
+#include <KeyCardScanner.h>
 
 #define SS_PIN  5   // SDA/SS on the RC522
 #define RST_PIN 27  // RST pin on the RC522
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
-void setup() {
-  Serial.begin(115200);
+void setup2() {
   SPI.begin(18, 19, 23, 5);
   rfid.PCD_Init();
 
@@ -18,7 +18,7 @@ void setup() {
   Serial.println("Bring your card or fob closer to the reader...");
 }
 
-void loop() {
+void loop2() {
   if (!rfid.PICC_IsNewCardPresent()) {
     //Serial.println("No new card present");
     return;

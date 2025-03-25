@@ -2,6 +2,8 @@
   #include <Wire.h>
   #include <Adafruit_GFX.h>
   #include <Adafruit_SSD1306.h>
+  #include <KeyCardScanner.h>
+  #include <PeopleCount.h>
 
 
   // OLED Display
@@ -14,10 +16,6 @@
   Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
   //I2C Pins
-  #define SENSOR_PIN_Lose 34    
-  #define SENSOR_PIN_Board 35
-
-  int peopleCount = 0; //change to extern when PeopleCounter is implemented
 
 
 
@@ -30,9 +28,11 @@
   void setup() {
     // put your setup code here, to run once:
 
-    Serial.begin(9600);
-    pinMode(SENSOR_PIN_Lose, INPUT);
-    pinMode(SENSOR_PIN_Board, INPUT);
+    Serial.begin(115200);
+    setup1();
+    setup2();
+    
+
 
     Serial.println("Initializing OLED display...");
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -55,12 +55,11 @@
     }
 
   void loop() {
-    // put your main code here, to run repeatedly:
-    //ReadAllValues();
-    //ReadSensorLose();
-    //ReadSensorBoard();
 
     updateDisplay();
+
+    loop1();
+    loop2();  
     delay(500);
   }
 
@@ -71,29 +70,7 @@
 
 
 
-  void ReadSensorLose(){
-    int state = digitalRead(SENSOR_PIN_Lose);
-    if (state == LOW)
-    {
-      Serial.println("Object Detected Lose");
-    }
-    else
-    {
-      Serial.println("No Object Detected Lose");
-    }
-  }
-
-  void ReadSensorBoard(){
-    int state = digitalRead(SENSOR_PIN_Board);
-    if (state == LOW)
-    {
-      Serial.println("Object Detected Board");
-    }
-    else
-    {
-      Serial.println("No Object Detected Board");
-    }
-  }
+  
 
   void updateDisplay(){
     display.clearDisplay();
@@ -110,15 +87,4 @@
   // Show on display
   display.display();
     
-  }
-
-  void ReadAllValues(){
-    int lightValue_Board = analogRead(SENSOR_PIN_Board);
-    int lightValue_Lose = analogRead(SENSOR_PIN_Lose);
-    Serial.println("Board: " + String(lightValue_Board) + " \nLose: " + String(lightValue_Lose));
-
-  }
-
-
-
-  
+  } 
