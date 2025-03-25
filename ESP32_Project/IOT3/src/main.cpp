@@ -61,7 +61,6 @@
     //loop1();
     CheckIfPersonEntered();
     loop2();  
-    delay(500);
   }
 
   // put function definitions here:
