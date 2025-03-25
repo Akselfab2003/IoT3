@@ -93,13 +93,14 @@ unsigned long StateBoardLastTrigger = millis();
 
 
 void CheckIfPersonEntered(){
-  int stateLose = digitalRead(SENSOR_PIN_Lose); # First Sensor 
-  int stateBoard = digitalRead(SENSOR_PIN_Board); # Second Sensor
- 
-  if (stateLose == LOW){
-    StateLoseLastTrigger = millis();
+  int stateLose = digitalRead(SENSOR_PIN_Lose); // First Sensor 
+  int stateBoard = digitalRead(SENSOR_PIN_Board);// Second Sensor
+  unsigned long currentTime = millis();
 
-    if (StateLoseLastTrigger - StateBoardLastTrigger < 500){
+  if (stateLose == LOW && (currentTime - StateLoseLastTrigger > 50)){
+    StateLoseLastTrigger = currentTime;
+
+    if (StateLoseLastTrigger - StateBoardLastTrigger <= 500){
       Serial.println("Person Entered");
       peopleCount++;
     }
@@ -107,12 +108,15 @@ void CheckIfPersonEntered(){
   }
 
 
-  if (stateBoard == LOW){
-    StateBoardLastTrigger = millis();
+  if (stateBoard == LOW && (currentTime - StateBoardLastTrigger > 50)){
+    StateBoardLastTrigger = currentTime;
 
-    if (StateBoardLastTrigger - StateLoseLastTrigger < 500){
+    if ( StateBoardLastTrigger - StateLoseLastTrigger =< 500){
       Serial.println("Person Exited");
-      peopleCount--;
+      if (peopleCount > 0){
+          peopleCount--;
+      }
+
     }
 
   }
