@@ -4,6 +4,8 @@ from sqlalchemy import Column, Integer, String, DateTime
 
 Base = declarative_base()
 
+DB_PATH = 'sqlite:///DB//IOT3_DB.db'
+
 class PeopleCounter(Base):
     __tablename__ = 'peoplecounter'
     id = Column(Integer, primary_key=True,autoincrement=True)
@@ -18,7 +20,7 @@ def AddNewPeopleCounterToDB(peopleCounter:PeopleCounter):
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine = create_engine('sqlite:///DB//IOT3_DB.db', echo=True)
+    engine = create_engine(DB_PATH, echo=True)
     Base.metadata.create_all(engine)
 
     Session = sessionmaker(bind=engine)
@@ -33,7 +35,7 @@ def ReadPeopleCounterFromDB():
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine = create_engine('sqlite:///DB//IOT3_DB.db', echo=True)
+    engine = create_engine(DB_PATH, echo=True)
     Base.metadata.create_all(engine)
 
     Session = sessionmaker(bind=engine)
