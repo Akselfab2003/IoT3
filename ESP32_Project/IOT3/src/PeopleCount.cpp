@@ -179,13 +179,13 @@ void CheckIfPersonEntered() {
         peopleCount++;
         Serial.println("Person Entered");
         Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
-        delay(100);
         currentState = WAITING; // Reset state
       } else if (currentTime - triggerTime > timeWindow) {
         // Timeout: Reset state if second sensor is not triggered in time
         Serial.println("Debug: Timeout waiting for Sensor Board. Resetting state.");
         currentState = WAITING;
       }
+      delay(100);
       break;
 
     case SENSOR_B_TRIGGERED:
@@ -196,13 +196,13 @@ void CheckIfPersonEntered() {
         }
         Serial.println("Person Exited");
         Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
-        delay(100);
         currentState = WAITING; // Reset state
       } else if (currentTime - triggerTime > timeWindow) {
         // Timeout: Reset state if first sensor is not triggered in time
         Serial.println("Debug: Timeout waiting for Sensor Lose. Resetting state.");
         currentState = WAITING;
       }
+      delay(100);
       break;
 
     default:
