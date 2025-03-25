@@ -97,12 +97,29 @@ void CheckIfPersonEntered(){
   int stateBoard = digitalRead(SENSOR_PIN_Board);// Second Sensor
   unsigned long currentTime = millis();
 
+
+  // Debug: Log sensor states and timestamps
+  Serial.println("Debug: Checking sensors...");
+  Serial.println("State Lose: " + String(stateLose));
+  Serial.println("State Board: " + String(stateBoard));
+  Serial.println("Current Time: " + String(currentTime));
+  Serial.println("StateLoseLastTrigger: " + String(StateLoseLastTrigger));
+  Serial.println("StateBoardLastTrigger: " + String(StateBoardLastTrigger));
+  
+
   if (stateLose == LOW && (currentTime - StateLoseLastTrigger > 50)){
     StateLoseLastTrigger = currentTime;
+    Serial.println("Debug: Sensor Lose triggered.");
+
 
     if (StateLoseLastTrigger - StateBoardLastTrigger <= 500){
       Serial.println("Person Entered");
       peopleCount++;
+      Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
+
+    }
+    else {
+      Serial.println("Debug: Sensor Board not triggered within time limit for entry.");
     }
 
   }
@@ -110,13 +127,17 @@ void CheckIfPersonEntered(){
 
   if (stateBoard == LOW && (currentTime - StateBoardLastTrigger > 50)){
     StateBoardLastTrigger = currentTime;
+    Serial.println("Debug: Sensor Board triggered.");
 
-    if ( StateBoardLastTrigger - StateLoseLastTrigger =< 500){
+
+    if ( StateBoardLastTrigger - StateLoseLastTrigger <= 500){
       Serial.println("Person Exited");
       if (peopleCount > 0){
           peopleCount--;
       }
-
+      Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
+    } else {
+      Serial.println("Debug: Sensor Lose not triggered within time limit for exit.");
     }
 
   }
