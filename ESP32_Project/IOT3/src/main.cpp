@@ -1,46 +1,82 @@
-#include <Arduino.h>
+  #include <Arduino.h>
+  #include <Wire.h>
+  #include <Adafruit_GFX.h>
+  #include <Adafruit_SSD1306.h>
+  #include <KeyCardScanner.h>
+  #include <PeopleCount.h>
 
 
-#define SENSOR_PIN 18
+  // OLED Display
+  #define SCREEN_WIDTH 128 // OLED display width, in pixels
+  #define SCREEN_HEIGHT 32 // OLED display height, in pixels
 
-void ReadSensor();
-//void ReadAllValues();
+  // Declaration for SSD1306 display connected using I2C
+  #define OLED_RESET     -1 // Reset pin
+  #define SCREEN_ADDRESS 0x3C
+  Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-void setup() {
-  // put your setup code here, to run once:
-
-  Serial.begin(9600);
-  pinMode(SENSOR_PIN, INPUT);
-
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-  //ReadAllValues();
-  ReadSensor();
-  delay(100);
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
-}
+  //I2C Pins
 
 
 
-void ReadSensor(){
-  int state = digitalRead(SENSOR_PIN);
-  if (state == LOW)
-  {
-    Serial.println("Object Detected");
+
+  void ReadSensorLose();
+  void ReadSensorBoard();
+  void updateDisplay();
+  //void ReadAllValues();
+
+  void setup() {
+    // put your setup code here, to run once:
+
+    Serial.begin(115200);
+    setup1();
+    setup2();
+    
+
+
+    Serial.println("Initializing OLED display...");
+    if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+      Serial.println(F("SSD1306 allocation failed"));
+      for(;;); // Don't proceed, loop forever
+    }
+      // Clear the buffer.
+    display.clearDisplay();
+
+    // Display ASCII Characters
+    display.setTextColor(WHITE);
+    display.setCursor(0.5,0.5);
+    display.setTextSize(3);
+    display.write(3);
+    display.display();
+    delay(2000);
+    display.clearDisplay();
+
+      
+    }
+
+  void loop() {
+
+    updateDisplay();
+
+    //loop1();
+    CheckIfPersonEntered();
+    loop2();  
   }
-  else
-  {
-    Serial.println("No Object Detected");
-  }
-}
+ 
 
-void ReadAllValues(){
-  int lightValue = analogRead(SENSOR_PIN);
-  Serial.println(lightValue);
-}
+  void updateDisplay(){
+    display.clearDisplay();
+
+    
+    // Display the people count next to the icon
+  display.setTextSize(1);
+  display.setCursor(20, 0);
+  display.println("People Count:");
+  display.setCursor(20, 16);
+  display.setTextSize(2);
+  display.println(peopleCount);
+  
+  // Show on display
+  display.display();
+    
+  } 

@@ -1,8 +1,11 @@
 from datetime import datetime,timezone
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime
+from config import Config
 
 Base = declarative_base()
+
+DB_PATH = Config().DB_PATH
 
 class PeopleCounter(Base):
     __tablename__ = 'peoplecounter'
@@ -18,7 +21,7 @@ def AddNewPeopleCounterToDB(peopleCounter:PeopleCounter):
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine = create_engine('sqlite:///DB//IOT3_DB.db', echo=True)
+    engine = create_engine(DB_PATH)
     Base.metadata.create_all(engine)
 
     Session = sessionmaker(bind=engine)
@@ -33,7 +36,7 @@ def ReadPeopleCounterFromDB():
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine = create_engine('sqlite:///DB//IOT3_DB.db', echo=True)
+    engine = create_engine(DB_PATH)
     Base.metadata.create_all(engine)
 
     Session = sessionmaker(bind=engine)
