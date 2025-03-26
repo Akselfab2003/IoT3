@@ -30,8 +30,8 @@ def Setup():
     logger.info("Connecting to broker: " + BROKER)
     Client = mqtt.Client()
     Client.on_message = on_PersonDetected
-    Client.on_connect = on_connect
-    Client.on_subscribe = on_subscribe
+    #Client.on_connect = on_connect
+    #Client.on_subscribe = on_subscribe
     Client.connect(BROKER, PORT, 60)
     Client.subscribe(TOPIC)
     Client.loop_start()
