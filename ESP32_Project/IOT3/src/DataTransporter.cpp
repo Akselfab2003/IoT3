@@ -2,16 +2,9 @@
 #include <wifi_configuration.h>
 #include <DataTransporter.h>
 
-const char* mqtt_server = "localhost";
+//remember to change IP address to the IP address of your MQTT broker
+//const char* mqtt_server = "";
 const int   mqtt_port = 1883;
-
-enum class Topics{
-    Sensor1Triggered,
-    Sensor2Triggered,
-    PersonDetected,
-    KeyCardDetected,
-};
-
 
 PubSubClient client;
 
@@ -26,6 +19,7 @@ void InitializeMQTT(){
 
     client.setClient(espClient);
     client.setServer(mqtt_server, mqtt_port);
+    client.connect("ESP32Client");
 
 }
 

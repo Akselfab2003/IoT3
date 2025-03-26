@@ -1,7 +1,7 @@
 import os
 import paho.mqtt.client as mqtt
 
-BROKER = "localhost"  # Default to localhost if BROKER is not set
+BROKER = "mosquitto"  # Default to localhost if BROKER is not set
 PORT = 1883
 TOPIC = "PersonDetected"
 
@@ -24,4 +24,4 @@ def Setup():
 
     Client.subscribe(TOPIC)
 
-    Client.loop()
+    Client.loop_start()

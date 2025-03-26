@@ -19,4 +19,4 @@ def index(request: Request):
     return templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!","PeopleCount":ReadPeopleCounterFromDB()})
 
 
-#Setup()
+Setup()
