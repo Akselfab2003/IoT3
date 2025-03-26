@@ -6,4 +6,6 @@ extern WiFiClient espClient;
 
 void initialize_WiFi();
 
+void EnsureWiFiConnection();
+
 #endif
