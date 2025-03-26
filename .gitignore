@@ -1,3 +1,4 @@
 DB/IOT3_DB.db
 .env
 Services/Webserver/__pycache__/*.pyc
+Services/Webserver/DB/*

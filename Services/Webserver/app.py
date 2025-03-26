@@ -7,7 +7,7 @@ from PeopleCounter import ReadPeopleCounterFromDB
 app = FastAPI()
 
 # Mount static folder
-app.mount("Services\Webserver\static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Set up templates
 templates = Jinja2Templates(directory="templates")
