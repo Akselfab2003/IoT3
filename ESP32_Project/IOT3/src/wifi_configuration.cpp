@@ -1,17 +1,16 @@
 #include <WiFi.h>
 #include <wifi_configuration.h>
 
-const char* ssid = "your_ssid";
-const char* password = "your_password";
-
+//#define  WIFI_SSID  Wifi
+//#define  WIFI_PASS "your_password" 
 
 WiFiClient espClient;
 
 void initialize_WiFi(){
 
     Serial.println("Attempting to connect to WiFi network");
-    Serial.println("SSID: " + String(ssid));
-    WiFi.begin(ssid,password);
+    Serial.println("SSID: " + String(WIFI_SSID));
+    WiFi.begin(WIFI_SSID,WIFI_PASS);
 
     while(WiFi.status() != WL_CONNECTED){
         delay(500);

@@ -4,7 +4,8 @@
   #include <Adafruit_SSD1306.h>
   #include <KeyCardScanner.h>
   #include <PeopleCount.h>
-
+  #include <wifi_configuration.h>
+  #include <DataTransporter.h>
 
   // OLED Display
   #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -32,7 +33,9 @@
     setup1();
     setup2();
     
+    initialize_WiFi();
 
+    InitializeMQTT();
 
     Serial.println("Initializing OLED display...");
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
