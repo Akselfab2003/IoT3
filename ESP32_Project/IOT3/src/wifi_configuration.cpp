@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <wifi_configuration.h>
 
-#define  WIFI_SSID  "your_ssid"
-#define  WIFI_PASS "your_password" 
+//#define  WIFI_SSID  Wifi
+//#define  WIFI_PASS "your_password" 
 
 WiFiClient espClient;
 

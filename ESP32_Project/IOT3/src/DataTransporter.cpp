@@ -2,7 +2,7 @@
 #include <wifi_configuration.h>
 #include <DataTransporter.h>
 
-const char* mqtt_server = "your_mqtt_server";
+const char* mqtt_server = "localhost";
 const int   mqtt_port = 1883;
 
 enum class Topics{
