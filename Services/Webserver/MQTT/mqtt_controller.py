@@ -12,9 +12,7 @@ logger.info("Connecting to broker: " + BROKER)
 
 def on_PersonDetected(client, userdata, message):
     logger.info("message received ", str(message.payload.decode("utf-8")))
-    logger.info("message topic=", message.topic)
-    logger.info("message qos=", message.qos)
-    logger.info("message retain flag=", message.retain)
+    
     
 def on_connect(client, userdata, flags, rc):
     logger.info("Connected with result code ")
