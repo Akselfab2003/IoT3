@@ -36,6 +36,21 @@ void EnsureMQTTConnection(){
     }
 }
 
+const char* GetSelectedTopic(Topics topic){
+    switch(topic){
+        case Topics::Sensor1Triggered:
+            return "Sensor1Triggered";
+        case Topics::Sensor2Triggered:
+            return "Sensor2Triggered";
+        case Topics::PersonDetected:
+            return "PersonDetected";
+        case Topics::KeyCardDetected:
+            return "KeyCardDetected";
+        default:
+            return nullptr;
+    }
+}
+
 bool PublishData(Topics topic, const char* payload){
 
     EnsureMQTTConnection();
@@ -58,19 +73,4 @@ bool PublishData(Topics topic, const char* payload){
         Serial.println("Failed to publish data");
     }
     return success;
-}
-
-const char* GetSelectedTopic(Topics topic){
-    switch(topic){
-        case Topics::Sensor1Triggered:
-            return "Sensor1Triggered";
-        case Topics::Sensor2Triggered:
-            return "Sensor2Triggered";
-        case Topics::PersonDetected:
-            return "PersonDetected";
-        case Topics::KeyCardDetected:
-            return "KeyCardDetected";
-        default:
-            return nullptr;
-    }
 }
