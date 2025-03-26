@@ -1,7 +1,7 @@
 from datetime import datetime,timezone
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, create_engine
-from config import Config
+from Models.config import Config
 import os
 
 Base = declarative_base()

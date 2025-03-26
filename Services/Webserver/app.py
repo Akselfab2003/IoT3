@@ -5,6 +5,7 @@ from starlette.requests import Request
 from Models.PeopleCounter import ReadPeopleCounterFromDB
 from MQTT.mqtt_controller import Setup
 
+
 app = FastAPI()
 
 # Mount static folder
@@ -18,4 +19,4 @@ def index(request: Request):
     return templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!","PeopleCount":ReadPeopleCounterFromDB()})
 
 
-Setup()
+#Setup()
