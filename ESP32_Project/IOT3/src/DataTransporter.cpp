@@ -1,5 +1,6 @@
 #include <PubSubClient.h>
 #include <wifi_configuration.h>
+#include <DataTransporter.h>
 
 const char* mqtt_server = "your_mqtt_server";
 const int   mqtt_port = 1883;
