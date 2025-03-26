@@ -17,7 +17,7 @@ def on_PersonDetected(client, userdata, message):
     logger.info("message retain flag=", message.retain)
     
 def on_connect(client, userdata, flags, rc):
-    logger.info("Connected with result code "+str(rc))
+    logger.info("Connected with result code ")
     client.subscribe(TOPIC)
     
 
@@ -30,7 +30,7 @@ def Setup():
     logger.info("Connecting to broker: " + BROKER)
     Client = mqtt.Client()
     Client.on_message = on_PersonDetected
-    #Client.on_connect = on_connect
+    Client.on_connect = on_connect
     #Client.on_subscribe = on_subscribe
     Client.connect(BROKER, PORT, 60)
     Client.subscribe(TOPIC)
