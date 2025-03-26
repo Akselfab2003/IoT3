@@ -1,11 +1,18 @@
 from datetime import datetime,timezone
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from config import Config
+import os
 
 Base = declarative_base()
 
 DB_PATH = Config().DB_PATH
+
+db_file_path = DB_PATH.replace("sqlite:///", "")  
+db_dir = os.path.dirname(db_file_path)
+
+if not os.path.exists(db_dir):
+    os.makedirs(db_dir)  
 
 class PeopleCounter(Base):
     __tablename__ = 'peoplecounter'
@@ -51,7 +58,3 @@ def ReadPeopleCounterFromDB():
 
 #AddNewPeopleCounterToDB(test)
 
-
-entries = ReadPeopleCounterFromDB()
-for entry in entries:
-    print(entry.id,entry.timestamp,entry.people)
