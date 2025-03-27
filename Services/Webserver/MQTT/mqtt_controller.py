@@ -6,6 +6,7 @@ class Topic(enum.Enum):
     PersonDetected = "PersonDetected"
     RegisterSensor = "RegisterSensor"
     SensorTriggered = "SensorTriggered"
+    KeyCardDetected = "KeyCardDetected"
 
 logger = logging.getLogger(__name__)
 BROKER = "mosquitto" 
@@ -24,6 +25,8 @@ def on_message(client, userdata, message):
             logger.info("Register Sensor")
         case Topic.SensorTriggered:
             logger.info("Sensor Triggered")
+        case Topic.KeyCardDetected:
+            logger.info("KeyCard Detected")
                 
 
 def on_PersonDetected(client, userdata, message):
