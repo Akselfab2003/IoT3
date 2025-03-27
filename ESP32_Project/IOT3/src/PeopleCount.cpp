@@ -103,6 +103,9 @@ void CheckIfPersonEntered() {
       break;
 
     case SENSOR_B_TRIGGERED:
+
+      PublishData(Topics::SensorTriggered, "Sensor B Triggered");
+
       // Waiting for the first sensor (Lose) to confirm exit
       if (stateLose == LOW && (currentTime - triggerTime <= timeWindow)) {
         if (peopleCount > 0) {
