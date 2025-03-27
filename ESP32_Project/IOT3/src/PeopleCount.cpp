@@ -27,7 +27,9 @@ const char* createJsonBody(Move_Sensor sensor){
   doc["type"] = sensor.type;
   doc["unit"] = sensor.unit;
   doc["value"] = sensor.value;
-  return doc.as<String>().c_str();
+  String jsonString;
+  serializeJson(doc, jsonString);
+  return jsonString.c_str();
 }
 
 
