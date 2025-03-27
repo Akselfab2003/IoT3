@@ -49,5 +49,5 @@ def Setup():
     Client.on_message = on_message
 
     Client.connect(BROKER, PORT, 60)
-    Client.subscribe([e.value for e in Topic])
+    Client.subscribe([(e.value, 0) for e in Topic])
     Client.loop_start()
