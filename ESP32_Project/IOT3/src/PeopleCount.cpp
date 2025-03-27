@@ -21,7 +21,7 @@ const unsigned long   timeWindow = 500; // Time window in milliseconds for a val
 
 int peopleCount = 0;
 
-const char* createJsonBody(Move_Sensor sensor){
+String createJsonBody(Move_Sensor sensor){
   ArduinoJson::StaticJsonDocument<200> doc;
   doc["name"] = sensor.name;
   doc["type"] = sensor.type;
@@ -29,7 +29,8 @@ const char* createJsonBody(Move_Sensor sensor){
   doc["value"] = sensor.value;
   String jsonString;
   serializeJson(doc, jsonString);
-  return jsonString.c_str();
+  Serial.println(jsonString);
+  return jsonString;
 }
 
 
@@ -42,14 +43,14 @@ void setup1() {
   Move_Sensor sensor1 = Move_Sensor("SENSOR_PIN_Lose", "Move","Digital", 0);
   Move_Sensor sensor2 = Move_Sensor("SENSOR_PIN_Board", "Move","Digital", 0);
 
-  const char* jsonBody1 = createJsonBody(sensor1);
-  const char* jsonBody2 = createJsonBody(sensor2);
+  String jsonBody1 = createJsonBody(sensor1);
+  String jsonBody2 = createJsonBody(sensor2);
 
   Serial.println(jsonBody1);
   Serial.println(jsonBody2);
 
-  PublishData(Topics::RegisterSensor, jsonBody1);
-  PublishData(Topics::RegisterSensor, jsonBody1);
+  PublishData(Topics::RegisterSensor, jsonBody1.c_str());
+  PublishData(Topics::RegisterSensor, jsonBody1.c_str());
 
 
 }
