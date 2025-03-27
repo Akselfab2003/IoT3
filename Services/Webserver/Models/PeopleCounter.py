@@ -1,7 +1,7 @@
 from datetime import datetime,timezone
 from sqlalchemy import Column, Integer, DateTime
 from base import Base
-from db import DB_ENGINE,SESSION_MAKER
+from db import DB_ENGINE,get_session
 
 class PeopleCounter(Base):
     __tablename__ = 'peoplecounter'
@@ -14,18 +14,16 @@ class PeopleCounter(Base):
         self.people = people
         self.timestamp = timestamp
 
-
 def add_new_people_counter_to_db(peopleCounter:PeopleCounter):
     Base.metadata.create_all(DB_ENGINE)
-    session = SESSION_MAKER()
+    session = get_session()
     session.add(peopleCounter)
     session.commit()
     session.close()
-    
 
 def read_people_counter_from_db():
     Base.metadata.create_all(DB_ENGINE)
-    session = SESSION_MAKER()
+    session = get_session()
     peopleCounter = session.query(PeopleCounter).all()
     session.close()
     return peopleCounter

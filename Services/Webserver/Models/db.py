@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,scoped_session
 from config import Config
 import os
 
@@ -18,4 +18,7 @@ DB_ENGINE = create_engine(DB_PATH)
 
 SESSION_MAKER = sessionmaker(bind=DB_ENGINE)
 
+Session = scoped_session(SESSION_MAKER)
 
+def get_session():
+    return Session()
