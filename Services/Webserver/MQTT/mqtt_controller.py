@@ -11,7 +11,7 @@ TOPIC = "PersonDetected"
 logger.info("Connecting to broker: " + BROKER)
 
 def on_PersonDetected(client, userdata, message):
-    logger.info(f"message received:{ str(message.payload.decode("utf-8"))}")
+    logger.info(f"message received:{ str(message.payload.decode('utf-8'))}")
     
     
 def on_connect(client, userdata, flags, rc):
