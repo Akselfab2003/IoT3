@@ -1,7 +1,7 @@
 from datetime import datetime,timezone
 from sqlalchemy import Column, Integer, DateTime
-from base import Base
-from db import DB_ENGINE,get_session
+from .base import Base
+from .db import DB_ENGINE,get_session
 
 class PeopleCounter(Base):
     __tablename__ = 'peoplecounter'

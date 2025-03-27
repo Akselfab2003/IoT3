@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
-from config import Config
+from .config import Config
 import os
 from contextlib import contextmanager
 
