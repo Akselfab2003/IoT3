@@ -16,9 +16,9 @@ logger.info("Connecting to broker: " + BROKER)
 
 
 def on_message(client, userdata, message):
-    logger.info(f"Topic: {message.topic.decode('utf-8')} Message: {str(message.payload.decode('utf-8'))}")
+    logger.info(f"Topic: {message.topic} Message: {str(message.payload.decode('utf-8'))}")
     
-    topic = message.topic.decode('utf-8')
+    topic = message.topic
     
     
     if topic == Topic.PersonDetected.value:
