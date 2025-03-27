@@ -46,7 +46,9 @@ void setup1() {
   Serial.println(jsonBody1);
   Serial.println(jsonBody2);
 
-  PublishData(Topics::, jsonBody1);
+  PublishData(Topics::RegisterSensor, jsonBody1);
+  PublishData(Topics::RegisterSensor, jsonBody1);
+
 
 }
 
