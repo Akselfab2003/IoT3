@@ -16,7 +16,7 @@ void saveToCache(int peopleCount, String timestamp) {
         return;
     }
     
-    StaticJsonDocument<256> doc;
+    ArduinoJson::StaticJsonDocument<256> doc;
     doc["peopleCount"] = peopleCount;
     doc["timestamp"] = timestamp;
     
