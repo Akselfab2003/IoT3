@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
 from config import Config
 import os
+from contextlib import contextmanager
 
 def Create_Database_Path_If_Needed(PATH=None):
     db_file_path = PATH.replace("sqlite:///", "")  
@@ -16,9 +17,18 @@ Create_Database_Path_If_Needed(DB_PATH)
 
 DB_ENGINE = create_engine(DB_PATH)
 
-SESSION_MAKER = sessionmaker(bind=DB_ENGINE)
+SESSION_maker = sessionmaker(bind=DB_ENGINE,autoflush=True)
 
-Session = scoped_session(SESSION_MAKER)
+Session = scoped_session(SESSION_maker)
 
+@contextmanager
 def get_session():
-    return Session()
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+
+

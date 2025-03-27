@@ -15,15 +15,10 @@ class PeopleCounter(Base):
         self.timestamp = timestamp
 
 def add_new_people_counter_to_db(peopleCounter:PeopleCounter):
-    Base.metadata.create_all(DB_ENGINE)
-    session = get_session()
-    session.add(peopleCounter)
-    session.commit()
-    session.close()
+    with get_session() as session:
+        session.add(peopleCounter)
 
 def read_people_counter_from_db():
-    Base.metadata.create_all(DB_ENGINE)
-    session = get_session()
-    peopleCounter = session.query(PeopleCounter).all()
-    session.close()
-    return peopleCounter
+    with get_session() as session:
+        peopleCounter = session.query(PeopleCounter).all()
+        return peopleCounter
