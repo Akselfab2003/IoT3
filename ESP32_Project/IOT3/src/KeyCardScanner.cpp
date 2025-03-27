@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <KeyCardScanner.h>
+#include "DataTransporter.h"
 
 #define SS_PIN  5   // SDA/SS on the RC522
 #define RST_PIN 27  // RST pin on the RC522
@@ -29,17 +30,18 @@ void loop2() {
     return;
   }
 
-  Serial.print("Card UID: ");
+  // Convert the UID to a string
+  String uidStr = "";
   for (byte i = 0; i < rfid.uid.size; i++) {
-    Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(rfid.uid.uidByte[i], HEX);
+    uidStr += (rfid.uid.uidByte[i] < 0x10 ? "0" : "");
+    uidStr += String(rfid.uid.uidByte[i], HEX);
   }
-  Serial.println();
+  Serial.println("Card UID: " + uidStr);
 
-  MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
-  Serial.print("PICC Type: ");
-  Serial.println(rfid.PICC_GetTypeName(piccType));
+  // Publish the UID over MQTT (using your existing DataTransporter functionality)
+  PublishData(Topics::KeyCardDetected, uidStr.c_str());
 
+  // Halt communication with the card
   rfid.PICC_HaltA();
   rfid.PCD_StopCrypto1();
 }
