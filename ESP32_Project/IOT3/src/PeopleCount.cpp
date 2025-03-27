@@ -1,7 +1,10 @@
 #include <esp32-hal-gpio.h>
 #include <HardwareSerial.h>
 #include <PeopleCount.h>
+#include <sensor.h>
+#include <ArduinoJson.h>
 #include <DataTransporter.h>
+#include <MovementSensor.h>
 
 #define SENSOR_PIN_Lose 34    
 #define SENSOR_PIN_Board 35
@@ -18,12 +21,36 @@ const unsigned long   timeWindow = 500; // Time window in milliseconds for a val
 
 int peopleCount = 0;
 
+const char* createJsonBody(Move_Sensor sensor){
+  ArduinoJson::StaticJsonDocument<200> doc;
+  doc["name"] = sensor.name;
+  doc["type"] = sensor.type;
+  doc["unit"] = sensor.unit;
+  doc["value"] = sensor.value;
+  return doc.as<String>().c_str();
+}
+
+
 void setup1() {
   // Use INPUT_PULLUP if sensors pull the line LOW when activated
   pinMode(SENSOR_PIN_Lose, INPUT);
   pinMode(SENSOR_PIN_Board, INPUT);
   Serial.println("People counter system initialized.");
+
+  Move_Sensor sensor1 = Move_Sensor("SENSOR_PIN_Lose", "Move","Digital", 0);
+  Move_Sensor sensor2 = Move_Sensor("SENSOR_PIN_Board", "Move","Digital", 0);
+
+  const char* jsonBody1 = createJsonBody(sensor1);
+  const char* jsonBody2 = createJsonBody(sensor2);
+
+  Serial.println(jsonBody1);
+  Serial.println(jsonBody2);
+
+  PublishData(Topics::, jsonBody1);
+
 }
+
+
 
 unsigned long StateLoseLastTrigger = millis();
 unsigned long StateBoardLastTrigger = millis();

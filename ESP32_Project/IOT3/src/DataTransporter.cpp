@@ -38,6 +38,8 @@ const char* GetSelectedTopic(Topics topic){
             return "PersonDetected";
         case Topics::KeyCardDetected:
             return "KeyCardDetected";
+        case Topics::RegisterSensor:
+            return "RegisterSensor";
         default:
             return nullptr;
     }
