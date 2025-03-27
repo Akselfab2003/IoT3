@@ -2,8 +2,7 @@
 #define DataTransporter_h
 
 enum class Topics{
-    Sensor1Triggered,
-    Sensor2Triggered,
+    SensorTriggered,
     PersonDetected,
     KeyCardDetected,
 };

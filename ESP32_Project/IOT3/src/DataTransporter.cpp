@@ -32,10 +32,8 @@ void EnsureMQTTConnection(){
 
 const char* GetSelectedTopic(Topics topic){
     switch(topic){
-        case Topics::Sensor1Triggered:
-            return "Sensor1Triggered";
-        case Topics::Sensor2Triggered:
-            return "Sensor2Triggered";
+        case Topics::SensorTriggered:
+            return "SensorTriggered";
         case Topics::PersonDetected:
             return "PersonDetected";
         case Topics::KeyCardDetected:
