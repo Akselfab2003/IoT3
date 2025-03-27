@@ -16,19 +16,21 @@ logger.info("Connecting to broker: " + BROKER)
 
 
 def on_message(client, userdata, message):
-    logger.info(f"Topic: {message.topic} Message: {str(message.payload.decode('utf-8'))}")
+    logger.info(f"Topic: {message.topic.decode('utf-8')} Message: {str(message.payload.decode('utf-8'))}")
     
-    match message.topic:
-        case Topic.PersonDetected:
-            logger.info("Person Detected")
-        case Topic.RegisterSensor:
-            logger.info("Register Sensor")
-        case Topic.SensorTriggered:
-            logger.info("Sensor Triggered")
-        case Topic.KeyCardDetected:
-            logger.info("KeyCard Detected")
-                
+    topic = message.topic.decode('utf-8')
+    
+    
+    if topic == Topic.PersonDetected.value:
+        logger.info("Person Detected")
+    elif topic == Topic.RegisterSensor.value:
+        logger.info("Register Sensor")
+    elif topic == Topic.SensorTriggered.value:
+        logger.info("Sensor Triggered")
+    elif topic == Topic.KeyCardDetected.value:
+        logger.info("KeyCard Detected")
 
+    
 def on_PersonDetected(client, userdata, message):
     logger.info(f"message received:{ str(message.payload.decode('utf-8'))}")
     
