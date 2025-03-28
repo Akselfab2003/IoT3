@@ -116,7 +116,13 @@
 
             // Simulate keycard scanning (you can replace this with actual logic)
             console.log("Simulating keycard scan...");
-          } else {
+          }else if (serverMessage.message == "SessionValidated"){
+            console.log("Session Validated");
+            scanMessageEl.textContent = "Successfully scanned card";
+            alert("Successfully scanned card");
+            window.location.href = "/viewpage";
+          }
+           else {
             console.log("Server response:", serverMessage);
           }
         };

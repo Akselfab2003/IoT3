@@ -89,6 +89,7 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
     
     userNotdefinedMsg = {"message": "UsernameNotDefined"}
     plsScanKeycardMsg = {"message": "PleaseScanKeycard"}
+    sessionValidatedMsg = {"message": "SessionValidated"}
     
     try:
         
@@ -117,7 +118,7 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         logger.info(f"Received keycard: {response}")
         session_store[session]["KeyCardValidated"] = True
         
-        await websocket.send_text("LoginValid")
+        await websocket.send_json(sessionValidatedMsg)
         
     except TimeoutError as e:
         logger.error(e)
