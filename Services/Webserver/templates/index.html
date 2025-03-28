@@ -1,88 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="../static/styles.css"/>
-</head>
-<body>
+    <link rel="stylesheet" href="../static/styles.css" />
+  </head>
+  <body>
     <h1>Login</h1>
     <form id="loginForm" class="login-box" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username" required>
-        <br>
-        <h3>Scan Keycard or Key fob</h3>
-        <div class="login-box">
-            <img src="../static/scan-icon.png" alt="Scan Icon" class="scan-icon">
-            <p id="scan-message">Please scan your keycard or key fob to login and view the diagram.</p>
-        </div>
-        <input type="hidden" id="keycard-id" name="keycard-id">
-        <button type="submit">Login</button>
+      <label for="username">Username:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your username"
+        required
+      />
+      <br />
+      <h3>Scan Keycard or Key fob</h3>
+      <div class="login-box">
+        <img src="../static/scan-icon.png" alt="Scan Icon" class="scan-icon" />
+        <p id="scan-message">
+          Please scan your keycard or key fob to login and view the diagram.
+        </p>
+      </div>
+      <input type="hidden" id="keycard-id" name="keycard-id" />
+      <button type="submit">Login</button>
     </form>
 
     <script>
-        // Handle login form submission
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const usernameInput = document.getElementById('username');
-            const scanMessageEl = document.getElementById('scan-message');
-            const keycardIdInput = document.getElementById('keycard-id');
+      // Handle login form submission
+      async function handleLogin(event) {
+        event.preventDefault();
 
-            try {
-                // Validate username
-                const usernameResponse = await fetch('/validate-username', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: usernameInput.value })
-                });
+        const usernameInput = document.getElementById("username");
+        const scanMessageEl = document.getElementById("scan-message");
+        const keycardIdInput = document.getElementById("keycard-id");
 
-                if (!usernameResponse.ok) {
-                    scanMessageEl.textContent = 'Invalid username';
-                    scanMessageEl.classList.add('scan-error');
-                    return;
-                }
+        try {
+          // Validate username
+          const usernameResponse = await fetch("/validate-username", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username: usernameInput.value }),
+          });
 
-                // Validate keycard
-                const keycardResponse = await fetch('/validate-keycard', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        username: usernameInput.value, 
-                        keycardId: keycardIdInput.value 
-                    })
-                });
+          if (!usernameResponse.ok) {
+            scanMessageEl.textContent = "Invalid username";
+            scanMessageEl.classList.add("scan-error");
+            return;
+          }
 
-                if (keycardResponse.ok) {
-                    // Successful login
-                    scanMessageEl.textContent = 'Successfully scanned card';
-                    scanMessageEl.classList.remove('scan-error');
-                    scanMessageEl.classList.add('scan-success');
+          // Validate keycard
+          const keycardResponse = await fetch("/validate-keycard", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: usernameInput.value,
+              keycardId: keycardIdInput.value,
+            }),
+          });
 
-                    // Redirect or perform login action
-                    window.location.href = '/viewPage';
-                } else {
-                    // Keycard validation failed
-                    scanMessageEl.textContent = 'Invalid keycard';
-                    scanMessageEl.classList.remove('scan-success');
-                    scanMessageEl.classList.add('scan-error');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                scanMessageEl.textContent = 'Login failed. Please try again.';
-                scanMessageEl.classList.add('scan-error');
-            }
+          if (keycardResponse.ok) {
+            // Successful login
+            scanMessageEl.textContent = "Successfully scanned card";
+            scanMessageEl.classList.remove("scan-error");
+            scanMessageEl.classList.add("scan-success");
+
+            // Redirect or perform login action
+            window.location.href = "/viewPage";
+          } else {
+            // Keycard validation failed
+            scanMessageEl.textContent = "Invalid keycard";
+            scanMessageEl.classList.remove("scan-success");
+            scanMessageEl.classList.add("scan-error");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          scanMessageEl.textContent = "Login failed. Please try again.";
+          scanMessageEl.classList.add("scan-error");
         }
+      }
 
-        // Add event listener to form
-        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+      async function WaitForKeyCardScan() {
+        // Open a WebSocket connection
+        const socket = new WebSocket("ws://localhost:5000/keycard");
+        const usernameInput = document.getElementById("username");
+        const scanMessageEl = document.getElementById("scan-message");
+        const keycardIdInput = document.getElementById("keycard-id");
+        // Handle WebSocket connection opening
+        socket.onopen = () => {
+          console.log("WebSocket connection established.");
+          // Send an initial message to the server
+          const userNotDefinedMessage = { username: usernameInput.value }; // Replace with actual username if available
+          socket.send(JSON.stringify(userNotDefinedMessage));
+        };
+
+        // Handle messages received from the server
+        socket.onmessage = (event) => {
+          const serverMessage = JSON.parse(event.data);
+
+          if (serverMessage.message === "UsernameNotDefined") {
+            console.log("Server requested username.");
+            // Send the username to the server
+            const usernameMessage = { username: usernameInput.value}; // Replace with actual username
+            console.log(JSON.stringify(usernameMessage));
+            socket.send(JSON.stringify(usernameMessage));
+          } else if (serverMessage.message === "PleaseScanKeycard") {
+            console.log("Server requested keycard scan.");
+
+            // Simulate keycard scanning (you can replace this with actual logic)
+            console.log("Simulating keycard scan...");
+          } else {
+            console.log("Server response:", serverMessage);
+          }
+        };
+
+        // Handle WebSocket errors
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+        };
+
+        // Handle WebSocket connection closing
+        socket.onclose = () => {
+          console.log("WebSocket connection closed.");
+        };
+      }
+
+      // Add event listener to form
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", handleLogin);
     </script>
-</body>
+  </body>
 </html>
 <!--python code:
 @app.route('/validate-username', methods=['POST'])

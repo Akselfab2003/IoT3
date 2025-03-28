@@ -94,6 +94,41 @@ def SensorTriggered(payload:str):
 
 
 
+import asyncio
+
+
+
+async def WaitforKeyCard():
+    
+    future = asyncio.Future()
+    
+    def KeyCardDetected(client, userdata, message):
+        if message.topic == Topic.KeyCardDetected.value:
+            payload = str(message.payload.decode('utf-8'))
+            if not future.done():
+                future.set_result(payload)
+                
+            logger.info("KeyCard Detected")
+            logger.info(f"KeyCardDetected: {payload}")
+    
+    KeyCardClient = mqtt.Client()
+    KeyCardClient.connect(BROKER, PORT, 60)
+    KeyCardClient.subscribe(Topic.KeyCardDetected.value)
+    KeyCardClient.on_message = KeyCardDetected
+    KeyCardClient.loop_start()
+    
+    try:
+        return await asyncio.wait_for(future,30)
+    except asyncio.TimeoutError:
+        raise TimeoutError("Timeout waiting for KeyCard")
+    finally:
+        KeyCardClient.loop_stop()
+        KeyCardClient.disconnect()
+    
+    
+    
+
+
 def Setup():
     logger.info("Connecting to broker: " + BROKER)
     Client = mqtt.Client()
