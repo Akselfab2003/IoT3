@@ -14,8 +14,7 @@ class Sensor(Base):
     logs = relationship("SensorsLog", back_populates="sensor")
     
     
-    def __init__(self, id, name, type, description):
-        self.id = id
+    def __init__(self, name, type, description):
         self.name = name
         self.type = type
         self.description = description

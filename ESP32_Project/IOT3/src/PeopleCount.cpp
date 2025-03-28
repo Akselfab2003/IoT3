@@ -45,9 +45,10 @@ void setup1() {
   Serial.println(jsonBody2);
 
   PublishData(Topics::RegisterSensor, jsonBody1.c_str());
-  PublishData(Topics::RegisterSensor, jsonBody1.c_str());
 
+  delay(1000);
 
+  PublishData(Topics::RegisterSensor, jsonBody2.c_str());
 }
 
 

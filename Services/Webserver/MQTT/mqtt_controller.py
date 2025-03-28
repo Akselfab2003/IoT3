@@ -46,13 +46,20 @@ def PersonDetected(payload:str):
     add_new_people_counter_to_db(peopleCountUpdate)
     
     
-def RegisterSensor(payload:str):
-    sensor: Sensor = json.loads(payload)
+def RegisterSensor(payload: str):
+    sensor_data = json.loads(payload)  # Parse the JSON payload into a dictionary
     logger.info("Register Sensor")
-    #logger.log(json.dumps(sensor, indent=4))
+    # logger.log(json.dumps(sensor_data, indent=4))
     
-    #sensor.id = 0
-    logger.info(f"Sensor: {sensor.name} registered")
+    # Create a Sensor object from the dictionary
+    sensor = Sensor(
+        #id=sensor_data.get("id", 0),  # Default to 0 if 'id' is not provided
+        name=sensor_data["name"],
+        type=sensor_data["type"],
+        description=sensor_data.get("description", "")  # Default to an empty string if 'description' is not provided
+    )
+    
+    logger.info(f"Sensor: {sensor} registered")
     add_new_sensor(sensor)
     
 def SensorTriggered(payload:str):

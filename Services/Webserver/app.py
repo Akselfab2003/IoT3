@@ -6,6 +6,10 @@ from MQTT.mqtt_controller import Setup
 import logging
 
 from Models.PeopleCounter import PeopleCounter,read_people_counter_from_db,add_new_people_counter_to_db
+from Models.base import Base
+from Models.db import DB_ENGINE
+
+Base.metadata.create_all(bind=DB_ENGINE)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
