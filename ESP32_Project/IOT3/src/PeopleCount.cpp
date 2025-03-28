@@ -147,6 +147,7 @@ void SendUpdateForSensorLog(String sensorName, float value) {
 
 String createJsonBody(Move_Sensor sensor){
   ArduinoJson::StaticJsonDocument<200> doc;
+  doc["id"] = sensor.id;
   doc["name"] = sensor.name;
   doc["type"] = sensor.type;
   doc["unit"] = sensor.unit;
@@ -163,6 +164,7 @@ String CreateSensorLogJson(SensorsLog sensorLog, String sensorName){
   doc["SensorName"] = sensorName;
 
   JsonObject sensorLogObject = doc.createNestedObject("SensorLogObject");
+  sensorLogObject["id"] = sensorLog.id;
   sensorLogObject["sensor_id"] = sensorLog.sensor_id;
   sensorLogObject["value"] = sensorLog.value;
   sensorLogObject["timestamp"] = sensorLog.timestamp;
@@ -175,6 +177,7 @@ String CreateSensorLogJson(SensorsLog sensorLog, String sensorName){
 
 String createPeopleCountToJson(PeopleCounter peopleCounter){
   ArduinoJson::StaticJsonDocument<200> doc;
+  doc["id"] = peopleCounter.id;
   doc["people"] = peopleCounter.people;
   doc["timestamp"] = peopleCounter.timestamp;
   String jsonString;
