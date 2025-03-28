@@ -3,17 +3,12 @@
 
 #include <ctime>
 
-class PeopleCounter {
-    public:
-        PeopleCounter(int count, time_t timestamp);
-        int getCount();
-        time_t getTimestamp();
-        void setCount(int count);
-        void setTimestamp(time_t timestamp);
-    private:
-        int count;
-        time_t timestamp;
+struct PeopleCounter
+{
+    PeopleCounter(int people, time_t timestamp) : people(people), timestamp(timestamp) {}
+    int id = 0;
+    int people;
+    std::time_t timestamp;
 };
-
 
 #endif

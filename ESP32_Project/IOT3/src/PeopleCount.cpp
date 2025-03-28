@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include <DataTransporter.h>
 #include <MovementSensor.h>
+#include <PeopleCounter.h>
 
 #define SENSOR_PIN_Lose 34    
 #define SENSOR_PIN_Board 35
@@ -20,19 +21,8 @@ unsigned long triggerTime = 0;
 const unsigned long   timeWindow = 500; // Time window in milliseconds for a valid sequence
 
 int peopleCount = 0;
-
-String createJsonBody(Move_Sensor sensor){
-  ArduinoJson::StaticJsonDocument<200> doc;
-  doc["name"] = sensor.name;
-  doc["type"] = sensor.type;
-  doc["unit"] = sensor.unit;
-  doc["value"] = sensor.value;
-  String jsonString;
-  serializeJson(doc, jsonString);
-  Serial.println(jsonString);
-  return jsonString;
-}
-
+String createJsonBody(Move_Sensor sensor);
+String createPeopleCountToJson(PeopleCounter peopleCounter);
 
 void setup1() {
   // Use INPUT_PULLUP if sensors pull the line LOW when activated
@@ -94,6 +84,7 @@ void CheckIfPersonEntered() {
       // Waiting for the second sensor (Board) to confirm entry
       if (stateBoard == LOW && (currentTime - triggerTime <= timeWindow)) {
         peopleCount++;
+        SendUpdateForPeopleCount(peopleCount);
         //Serial.println("Person Entered");
         //Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
         currentState = WAITING; // Reset state
@@ -113,6 +104,7 @@ void CheckIfPersonEntered() {
       if (stateLose == LOW && (currentTime - triggerTime <= timeWindow)) {
         if (peopleCount > 0) {
           peopleCount--;
+          SendUpdateForPeopleCount(peopleCount);
         }
         //Serial.println("Person Exited");
         //Serial.println("Debug: Updated peopleCount: " + String(peopleCount));
@@ -131,4 +123,34 @@ void CheckIfPersonEntered() {
       currentState = WAITING;
       break;
   }
+}
+
+void SendUpdateForPeopleCount(int NewPeopleCountValue) {
+  time_t timestamp = time(NULL);
+
+  PeopleCounter peopleCounter = PeopleCounter(NewPeopleCountValue, timestamp);
+  String peopleCountJson = createPeopleCountToJson(peopleCounter);
+  PublishData(Topics::PersonDetected, peopleCountJson.c_str());
+}
+
+String createJsonBody(Move_Sensor sensor){
+  ArduinoJson::StaticJsonDocument<200> doc;
+  doc["name"] = sensor.name;
+  doc["type"] = sensor.type;
+  doc["unit"] = sensor.unit;
+  doc["value"] = sensor.value;
+  String jsonString;
+  serializeJson(doc, jsonString);
+  Serial.println(jsonString);
+  return jsonString;
+}
+
+String createPeopleCountToJson(PeopleCounter peopleCounter){
+  ArduinoJson::StaticJsonDocument<200> doc;
+  doc["people"] = peopleCounter.people;
+  doc["timestamp"] = peopleCounter.timestamp;
+  String jsonString;
+  serializeJson(doc, jsonString);
+  Serial.println(jsonString);
+  return jsonString;
 }

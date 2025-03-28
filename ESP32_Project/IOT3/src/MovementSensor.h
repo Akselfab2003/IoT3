@@ -12,16 +12,4 @@ struct Move_Sensor
     float value;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 #endif

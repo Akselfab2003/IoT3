@@ -2,21 +2,13 @@
 #define SENSORSLOG_H
 #include <ctime>
 
-
-
-class SensorsLog {
-    public:
-        int id;
-        int sensor_id;
-        float value;
-        std::time_t timestamp;
-    
-        // Constructor
-        SensorsLog(int sensor_id, float value, std::time_t timestamp)
-            : id(0), sensor_id(sensor_id), value(value), timestamp(timestamp) {}
-    };
-
-
-
+struct SensorsLog
+{
+    SensorsLog(int sensor_id, float value, std::time_t timestamp) : sensor_id(sensor_id), value(value), timestamp(timestamp) {}
+    int id = 0;
+    int sensor_id;
+    float value;
+    std::time_t timestamp;
+};
 
 #endif
