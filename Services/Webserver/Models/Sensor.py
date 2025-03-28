@@ -33,6 +33,11 @@ def register_sensor(sensor:Sensor):
     DoesSensorExist = check_if_sensor_definition_exists(sensor.name)
     if DoesSensorExist == False:
         add_new_sensor(sensor)
+        
+def get_sensor_id_by_name(sensor_name:str):
+    with get_session() as session:
+        Sensor = session.query(Sensor).filter(Sensor.name == sensor_name).first()
+        return Sensor.id
     
 
 def check_if_sensor_definition_exists(sensor_name:str):

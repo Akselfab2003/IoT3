@@ -1,6 +1,10 @@
 import enum
+import json
 import paho.mqtt.client as mqtt
 import logging
+from Models.PeopleCounter import PeopleCounter,add_new_people_counter_to_db
+from Models.Sensor import Sensor,add_new_sensor,get_sensor_id_by_name
+from Models.SensorsLog import SensorsLog,add_new_sensor_log
 
 class Topic(enum.Enum):
     PersonDetected = "PersonDetected"
@@ -18,28 +22,50 @@ logger.info("Connecting to broker: " + BROKER)
 def on_message(client, userdata, message):
     logger.info(f"Topic: {message.topic} Message: {str(message.payload.decode('utf-8'))}")
     
+    payload = str(message.payload.decode('utf-8'))
     topic = message.topic
     
-    
     if topic == Topic.PersonDetected.value:
-        logger.info("Person Detected")
+        PersonDetected(payload)
+        
     elif topic == Topic.RegisterSensor.value:
-        logger.info("Register Sensor")
+        RegisterSensor(payload)
     elif topic == Topic.SensorTriggered.value:
-        logger.info("Sensor Triggered")
+        SensorTriggered(payload)
     elif topic == Topic.KeyCardDetected.value:
         logger.info("KeyCard Detected")
 
     
-def on_PersonDetected(client, userdata, message):
-    logger.info(f"message received:{ str(message.payload.decode('utf-8'))}")
+def PersonDetected(payload:str):
+    logger.info("Person Detected")
+    logger.log(json.dumps(payload, indent=4))
+
+    peopleCountUpdate: PeopleCounter = json.loads(payload)
+    peopleCountUpdate.id = 0
+    logger.info(f"Timestamp: {peopleCountUpdate.timestamp} Updating people count to: {peopleCountUpdate.people}")
+    add_new_people_counter_to_db(peopleCountUpdate)
     
-def RegisterSensor(client, userdata, message):
-    logger.info(f"message received:{ str(message.payload.decode('utf-8'))}")
     
+def RegisterSensor(payload:str):
+    logger.info("Register Sensor")
+    logger.log(json.dumps(payload, indent=4))
     
-def on_subscribe(client, userdata, mid, granted_qos):
-    logger.info("Subscribed: "+str(mid)+" "+str(granted_qos))
+    sensor: Sensor = json.loads(payload)
+    sensor.id = 0
+    logger.info(f"Sensor: {sensor.sensor_name} registered")
+    add_new_sensor(sensor)
+    
+def SensorTriggered(payload:str):
+    logger.info("Sensor Triggered")
+    logger.log(json.dumps(payload, indent=4))
+    
+    sensorLogUpdate = json.loads(payload)
+    sensorName = sensorLogUpdate["SensorName"]
+    sensor_id = get_sensor_id_by_name(sensorName)
+    sensorLog : SensorsLog = sensorLogUpdate["SensorLog"]
+    sensorLog.id = sensor_id
+    logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
+    add_new_sensor_log(sensorLog)
 
 
 
