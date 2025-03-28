@@ -41,14 +41,13 @@ def validate_session(session_id):
         return False
     return session_store[session_id]["KeyCardValidated"]
     
-    
 @app.get("/")
 def index(request: Request,session: str = Cookie(default=None)):
     val :list[PeopleCounter]= read_people_counter_from_db()
 
     response = templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!","PeopleCount":val[-1].people})
 
-    if session is None:
+    if session is None or session not in session_store:
         logger.info("No session cookie found")
         session_id = create_session()
         logger.info(f"Created new session with id {session_id}")
