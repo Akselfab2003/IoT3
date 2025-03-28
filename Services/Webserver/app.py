@@ -29,6 +29,11 @@ def index(request: Request):
     val :list[PeopleCounter]= read_people_counter_from_db()
     return templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!","PeopleCount":val[-1].people})
 
+@app.get("/viewpage")
+def view_page(request: Request):
+    val :list[PeopleCounter]= read_people_counter_from_db()
+    return templates.TemplateResponse("viewPage.html", {"request": request, "people_count": val[-1].people})
+
 
 @app.get("/test")
 def add_people():
@@ -47,3 +52,13 @@ def add_people():
     
     return {"PeopleCount":val[-1].people}
     
+
+@app.get("/api/people_count")
+def get_people_count():
+    val: list[PeopleCounter] = read_people_counter_from_db()
+    if not val:
+        return {"timestamps": [], "counts": []}
+    
+    timestamps = [entry.timestamp.isoformat() for entry in val]
+    counts = [entry.people for entry in val]
+    return {"timestamps": timestamps, "counts": counts}
