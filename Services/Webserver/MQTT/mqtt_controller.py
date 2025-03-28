@@ -68,9 +68,15 @@ def SensorTriggered(payload:str):
     #logger.log(json.dumps(sensorLogUpdate, indent=4))
     
     sensorName = sensorLogUpdate["SensorName"]
+    logger.info(f"Sensor: {sensorName} triggered")
     sensor_id = get_sensor_id_by_name(sensorName)
-    sensorLog : SensorsLog = sensorLogUpdate["SensorLog"]
-    sensorLog.id = sensor_id
+
+    sensorLog : SensorsLog = SensorsLog(
+        sensor_id=sensor_id,
+        value=sensorLogUpdate["SensorLogObject"]["value"],
+        timestamp=sensorLogUpdate["SensorLogObject"]["timestamp"]
+    )
+    
     #logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
     add_new_sensor_log(sensorLog)
 

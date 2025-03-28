@@ -37,7 +37,7 @@
 
     InitializeMQTT();
 
-    PublishData(Topics::PersonDetected, "System Initialized");
+    //PublishData(Topics::PersonDetected, "System Initialized");
 
     Serial.println("Initializing OLED display...");
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
