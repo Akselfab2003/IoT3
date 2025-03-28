@@ -51,8 +51,8 @@ def RegisterSensor(payload:str):
     logger.info("Register Sensor")
     #logger.log(json.dumps(sensor, indent=4))
     
-    sensor.id = 0
-    logger.info(f"Sensor: {sensor.sensor_name} registered")
+    #sensor.id = 0
+    logger.info(f"Sensor: {sensor.name} registered")
     add_new_sensor(sensor)
     
 def SensorTriggered(payload:str):
@@ -64,7 +64,7 @@ def SensorTriggered(payload:str):
     sensor_id = get_sensor_id_by_name(sensorName)
     sensorLog : SensorsLog = sensorLogUpdate["SensorLog"]
     sensorLog.id = sensor_id
-    logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
+    #logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
     add_new_sensor_log(sensorLog)
 
 
