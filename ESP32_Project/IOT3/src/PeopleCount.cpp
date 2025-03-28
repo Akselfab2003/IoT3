@@ -25,7 +25,8 @@ int peopleCount = 0;
 String createJsonBody(Move_Sensor sensor);
 String createPeopleCountToJson(PeopleCounter peopleCounter);
 String CreateSensorLogJson(SensorsLog sensorLog, String sensorName);
-
+void SendUpdateForPeopleCount(int NewPeopleCountValue);
+void SendUpdateForSensorLog(String sensorName, float value);
 
 
 void setup1() {
