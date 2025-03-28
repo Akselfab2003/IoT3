@@ -26,73 +26,77 @@
         </p>
       </div>
       <input type="hidden" id="keycard-id" name="keycard-id" />
-      <button type="submit">Login</button>
+      <!-- <button type="submit">Login</button> -->
     </form>
+    <button id="SubmitUserName">Login</button>
 
     <script>
       // Handle login form submission
-      async function handleLogin(event) {
-        event.preventDefault();
+    //   async function handleLogin(event) {
+    //     event.preventDefault();
 
-        const usernameInput = document.getElementById("username");
-        const scanMessageEl = document.getElementById("scan-message");
-        const keycardIdInput = document.getElementById("keycard-id");
+    //     const usernameInput = document.getElementById("username");
+    //     const scanMessageEl = document.getElementById("scan-message");
+    //     const keycardIdInput = document.getElementById("keycard-id");
 
-        try {
-          // Validate username
-          const usernameResponse = await fetch("/validate-username", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username: usernameInput.value }),
-          });
+    //     try {
+    //       // Validate username
+    //       const usernameResponse = await fetch("/validate-username", {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({ username: usernameInput.value }),
+    //       });
 
-          if (!usernameResponse.ok) {
-            scanMessageEl.textContent = "Invalid username";
-            scanMessageEl.classList.add("scan-error");
-            return;
-          }
+    //       if (!usernameResponse.ok) {
+    //         scanMessageEl.textContent = "Invalid username";
+    //         scanMessageEl.classList.add("scan-error");
+    //         return;
+    //       }
 
-          // Validate keycard
-          const keycardResponse = await fetch("/validate-keycard", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: usernameInput.value,
-              keycardId: keycardIdInput.value,
-            }),
-          });
+    //       // Validate keycard
+    //       const keycardResponse = await fetch("/validate-keycard", {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           username: usernameInput.value,
+    //           keycardId: keycardIdInput.value,
+    //         }),
+    //       });
 
-          if (keycardResponse.ok) {
-            // Successful login
-            scanMessageEl.textContent = "Successfully scanned card";
-            scanMessageEl.classList.remove("scan-error");
-            scanMessageEl.classList.add("scan-success");
+    //       if (keycardResponse.ok) {
+    //         // Successful login
+    //         scanMessageEl.textContent = "Successfully scanned card";
+    //         scanMessageEl.classList.remove("scan-error");
+    //         scanMessageEl.classList.add("scan-success");
 
-            // Redirect or perform login action
-            window.location.href = "/viewPage";
-          } else {
-            // Keycard validation failed
-            scanMessageEl.textContent = "Invalid keycard";
-            scanMessageEl.classList.remove("scan-success");
-            scanMessageEl.classList.add("scan-error");
-          }
-        } catch (error) {
-          console.error("Login error:", error);
-          scanMessageEl.textContent = "Login failed. Please try again.";
-          scanMessageEl.classList.add("scan-error");
-        }
-      }
+    //         // Redirect or perform login action
+    //         window.location.href = "/viewPage";
+    //       } else {
+    //         // Keycard validation failed
+    //         scanMessageEl.textContent = "Invalid keycard";
+    //         scanMessageEl.classList.remove("scan-success");
+    //         scanMessageEl.classList.add("scan-error");
+    //       }
+    //     } catch (error) {
+    //       console.error("Login error:", error);
+    //       scanMessageEl.textContent = "Login failed. Please try again.";
+    //       scanMessageEl.classList.add("scan-error");
+    //     }
+    //   }
+
+        const keycardIdInput = document.getElementById("SubmitUserName");
+        keycardIdInput.onclick = WaitForKeyCardScan;
 
       async function WaitForKeyCardScan() {
         // Open a WebSocket connection
         const socket = new WebSocket("ws://localhost:5000/keycard");
         const usernameInput = document.getElementById("username");
         const scanMessageEl = document.getElementById("scan-message");
-        const keycardIdInput = document.getElementById("keycard-id");
+     
         // Handle WebSocket connection opening
         socket.onopen = () => {
           console.log("WebSocket connection established.");
@@ -138,10 +142,10 @@
         };
       }
 
-      // Add event listener to form
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", handleLogin);
+    //   // Add event listener to form
+    //   document
+    //     .getElementById("loginForm")
+    //     .addEventListener("submit", handleLogin);
     </script>
   </body>
 </html>
