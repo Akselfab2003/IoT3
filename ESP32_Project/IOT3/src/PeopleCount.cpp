@@ -6,6 +6,7 @@
 #include <DataTransporter.h>
 #include <MovementSensor.h>
 #include <PeopleCounter.h>
+#include <SensorsLog.h>
 
 #define SENSOR_PIN_Lose 34    
 #define SENSOR_PIN_Board 35
@@ -23,6 +24,9 @@ const unsigned long   timeWindow = 500; // Time window in milliseconds for a val
 int peopleCount = 0;
 String createJsonBody(Move_Sensor sensor);
 String createPeopleCountToJson(PeopleCounter peopleCounter);
+String CreateSensorLogJson(SensorsLog sensorLog, String sensorName);
+
+
 
 void setup1() {
   // Use INPUT_PULLUP if sensors pull the line LOW when activated
@@ -69,17 +73,18 @@ void CheckIfPersonEntered() {
       if (stateLose == LOW) {
         currentState = SENSOR_A_TRIGGERED;
         triggerTime = currentTime;
+        SendUpdateForSensorLog("SENSOR_PIN_Lose", stateLose);
         //Serial.println("Debug: Sensor Lose triggered first.");
       } else if (stateBoard == LOW) {
         currentState = SENSOR_B_TRIGGERED;
         triggerTime = currentTime;
         //Serial.println("Debug: Sensor Board triggered first.");
+        SendUpdateForSensorLog("SENSOR_PIN_Board", stateBoard);
       }
       break;
 
     case SENSOR_A_TRIGGERED:
 
-      PublishData(Topics::SensorTriggered, "Sensor A Triggered");
       
       // Waiting for the second sensor (Board) to confirm entry
       if (stateBoard == LOW && (currentTime - triggerTime <= timeWindow)) {
@@ -97,9 +102,7 @@ void CheckIfPersonEntered() {
       break;
 
     case SENSOR_B_TRIGGERED:
-
-      PublishData(Topics::SensorTriggered, "Sensor B Triggered");
-
+      
       // Waiting for the first sensor (Lose) to confirm exit
       if (stateLose == LOW && (currentTime - triggerTime <= timeWindow)) {
         if (peopleCount > 0) {
@@ -133,12 +136,36 @@ void SendUpdateForPeopleCount(int NewPeopleCountValue) {
   PublishData(Topics::PersonDetected, peopleCountJson.c_str());
 }
 
+
+void SendUpdateForSensorLog(String sensorName, float value) {
+  time_t timestamp = time(NULL);
+  SensorsLog sensorLog = SensorsLog(0, value, timestamp);
+  String sensorLogJson = CreateSensorLogJson(sensorLog, sensorName);
+  PublishData(Topics::SensorTriggered, sensorLogJson.c_str());
+}
+
 String createJsonBody(Move_Sensor sensor){
   ArduinoJson::StaticJsonDocument<200> doc;
   doc["name"] = sensor.name;
   doc["type"] = sensor.type;
   doc["unit"] = sensor.unit;
   doc["value"] = sensor.value;
+  String jsonString;
+  serializeJson(doc, jsonString);
+  Serial.println(jsonString);
+  return jsonString;
+}
+
+String CreateSensorLogJson(SensorsLog sensorLog, String sensorName){
+  ArduinoJson::StaticJsonDocument<200> doc;
+
+  doc["SensorName"] = sensorName;
+
+  JsonObject sensorLogObject = doc.createNestedObject("SensorLogObject");
+  sensorLogObject["sensor_id"] = sensorLog.sensor_id;
+  sensorLogObject["value"] = sensorLog.value;
+  sensorLogObject["timestamp"] = sensorLog.timestamp;
+
   String jsonString;
   serializeJson(doc, jsonString);
   Serial.println(jsonString);
