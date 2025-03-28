@@ -39,7 +39,7 @@ def on_message(client, userdata, message):
 def PersonDetected(payload:str):
     peopleCountUpdate: PeopleCounter = json.loads(payload)
     logger.info("Person Detected")
-    logger.log(json.dumps(peopleCountUpdate, indent=4))
+    #logger.log(json.dumps(peopleCountUpdate, indent=4))
 
     peopleCountUpdate.id = 0
     logger.info(f"Timestamp: {peopleCountUpdate.timestamp} Updating people count to: {peopleCountUpdate.people}")
@@ -49,7 +49,7 @@ def PersonDetected(payload:str):
 def RegisterSensor(payload:str):
     sensor: Sensor = json.loads(payload)
     logger.info("Register Sensor")
-    logger.log(json.dumps(sensor, indent=4))
+    #logger.log(json.dumps(sensor, indent=4))
     
     sensor.id = 0
     logger.info(f"Sensor: {sensor.sensor_name} registered")
@@ -58,7 +58,7 @@ def RegisterSensor(payload:str):
 def SensorTriggered(payload:str):
     sensorLogUpdate = json.loads(payload)
     logger.info("Sensor Triggered")
-    logger.log(json.dumps(sensorLogUpdate, indent=4))
+    #logger.log(json.dumps(sensorLogUpdate, indent=4))
     
     sensorName = sensorLogUpdate["SensorName"]
     sensor_id = get_sensor_id_by_name(sensorName)
