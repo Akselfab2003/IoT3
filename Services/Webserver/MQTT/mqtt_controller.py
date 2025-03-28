@@ -37,13 +37,18 @@ def on_message(client, userdata, message):
 
     
 def PersonDetected(payload:str):
-    peopleCountUpdate: PeopleCounter = json.loads(payload)
+    peopleCountUpdate = json.loads(payload)
     logger.info("Person Detected")
+
+    peopleCounter : PeopleCounter = PeopleCounter(
+        people=peopleCountUpdate["people"],
+        timestamp=peopleCountUpdate["timestamp"]
+    )
+    
     #logger.log(json.dumps(peopleCountUpdate, indent=4))
 
-    peopleCountUpdate.id = 0
-    logger.info(f"Timestamp: {peopleCountUpdate.timestamp} Updating people count to: {peopleCountUpdate.people}")
-    add_new_people_counter_to_db(peopleCountUpdate)
+    logger.info(f"Timestamp: {peopleCounter.timestamp} Updating people count to: {peopleCounter.people}")
+    add_new_people_counter_to_db(peopleCounter)
     
     
 def RegisterSensor(payload: str):
