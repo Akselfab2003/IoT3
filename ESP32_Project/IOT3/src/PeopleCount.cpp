@@ -27,7 +27,7 @@ String createPeopleCountToJson(PeopleCounter peopleCounter);
 String CreateSensorLogJson(SensorsLog sensorLog, String sensorName);
 void SendUpdateForPeopleCount(int NewPeopleCountValue);
 void SendUpdateForSensorLog(String sensorName, float value);
-const char* GetCurrentTime();
+String GetCurrentTimeMQTT(time_t timestamp);
 
 void setup1() {
   // Use INPUT_PULLUP if sensors pull the line LOW when activated
@@ -168,7 +168,7 @@ String CreateSensorLogJson(SensorsLog sensorLog, String sensorName){
   sensorLogObject["id"] = sensorLog.id;
   sensorLogObject["sensor_id"] = sensorLog.sensor_id;
   sensorLogObject["value"] = sensorLog.value;
-  sensorLogObject["timestamp"] = GetCurrentTime(sensorLog.timestamp);
+  sensorLogObject["timestamp"] = GetCurrentTimeMQTT(sensorLog.timestamp);
 
   String jsonString;
   serializeJson(doc, jsonString);
@@ -180,18 +180,18 @@ String createPeopleCountToJson(PeopleCounter peopleCounter){
   ArduinoJson::StaticJsonDocument<200> doc;
   doc["id"] = peopleCounter.id;
   doc["people"] = peopleCounter.people;
-  doc["timestamp"] = GetCurrentTime(peopleCounter.timestamp);
+  doc["timestamp"] = GetCurrentTimeMQTT(peopleCounter.timestamp);
   String jsonString;
   serializeJson(doc, jsonString);
   Serial.println(jsonString);
   return jsonString;
 }
 
-const char* GetCurrentTime(time_t timestamp){
+String GetCurrentTimeMQTT(time_t timestamp){
   struct tm timeinfo;
   localtime_r(&timestamp, &timeinfo);
   char formattedTime[20];
   strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", &timeinfo);
   Serial.println(formattedTime);
-  return formattedTime;
+  return String(formattedTime);
 }

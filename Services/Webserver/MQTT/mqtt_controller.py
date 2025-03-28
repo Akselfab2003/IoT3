@@ -5,6 +5,7 @@ import logging
 from Models.PeopleCounter import PeopleCounter,add_new_people_counter_to_db
 from Models.Sensor import Sensor,add_new_sensor,get_sensor_id_by_name
 from Models.SensorsLog import SensorsLog,add_new_sensor_log
+from datetime import datetime
 
 class Topic(enum.Enum):
     PersonDetected = "PersonDetected"
@@ -40,9 +41,12 @@ def PersonDetected(payload:str):
     peopleCountUpdate = json.loads(payload)
     logger.info("Person Detected")
 
+    timestamp = peopleCountUpdate["timestamp"]
+    dateTimestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+
     peopleCounter : PeopleCounter = PeopleCounter(
         people=peopleCountUpdate["people"],
-        timestamp=peopleCountUpdate["timestamp"]
+        timestamp=dateTimestamp
     )
     
     #logger.log(json.dumps(peopleCountUpdate, indent=4))
@@ -76,12 +80,15 @@ def SensorTriggered(payload:str):
     logger.info(f"Sensor: {sensorName} triggered")
     sensor_id = get_sensor_id_by_name(sensorName)
 
+    timestamp = sensorLogUpdate["SensorLogObject"]["timestamp"]
+    dateTimestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+
     sensorLog : SensorsLog = SensorsLog(
         sensor_id=sensor_id,
         value=sensorLogUpdate["SensorLogObject"]["value"],
-        timestamp=sensorLogUpdate["SensorLogObject"]["timestamp"]
+        timestamp=dateTimestamp
     )
-    
+
     #logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
     add_new_sensor_log(sensorLog)
 
