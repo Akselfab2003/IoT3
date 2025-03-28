@@ -20,6 +20,16 @@ body {
     color: #333333; /* Dark gray text color */
     max-width: 400px; /* Limit the width of the box */
 }
+.scan-error{
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+.scan-success{
+    color: green;
+    font-size: 1rem;
+    margin-top: 10px;
+}
 
 .scan-icon {
     width: 100px; /* Set the width of the image */
