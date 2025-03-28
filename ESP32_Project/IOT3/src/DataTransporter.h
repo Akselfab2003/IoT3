@@ -5,6 +5,7 @@ enum class Topics{
     SensorTriggered,
     PersonDetected,
     KeyCardDetected,
+    RegisterSensor
 };
 
 void InitializeMQTT();

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, DateTime, Float, ForeignKey
-from db import DB_ENGINE,get_session
-from base import Base
+from .db import DB_ENGINE,get_session
+from .base import Base
 from sqlalchemy.orm import relationship
 
 class SensorsLog(Base):
