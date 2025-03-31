@@ -39,7 +39,6 @@ def get_sensor_id_by_name(sensor_name:str):
         sensor = session.query(Sensor).filter(Sensor.name == sensor_name).first()
         return sensor.id
     
-
 def check_if_sensor_definition_exists(sensor_name:str):
     with get_session() as session:
         Sensors = session.query(Sensor).filter(Sensor.name == sensor_name).all()
