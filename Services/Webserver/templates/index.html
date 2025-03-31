@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Login</h1>
-    <form id="loginForm" class="login-box" method="POST">
+    <div id="loginForm" class="login-box">
       <label for="username">Username:</label>
       <input
         type="text"
@@ -26,68 +26,10 @@
         </p>
       </div>
       <input type="hidden" id="keycard-id" name="keycard-id" />
-      <!-- <button type="submit">Login</button> -->
-    </form>
-    <button id="SubmitUserName">Login</button>
+      <button id="SubmitUserName">Login</button>
+    </div>
 
     <script>
-      // Handle login form submission
-    //   async function handleLogin(event) {
-    //     event.preventDefault();
-
-    //     const usernameInput = document.getElementById("username");
-    //     const scanMessageEl = document.getElementById("scan-message");
-    //     const keycardIdInput = document.getElementById("keycard-id");
-
-    //     try {
-    //       // Validate username
-    //       const usernameResponse = await fetch("/validate-username", {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({ username: usernameInput.value }),
-    //       });
-
-    //       if (!usernameResponse.ok) {
-    //         scanMessageEl.textContent = "Invalid username";
-    //         scanMessageEl.classList.add("scan-error");
-    //         return;
-    //       }
-
-    //       // Validate keycard
-    //       const keycardResponse = await fetch("/validate-keycard", {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           username: usernameInput.value,
-    //           keycardId: keycardIdInput.value,
-    //         }),
-    //       });
-
-    //       if (keycardResponse.ok) {
-    //         // Successful login
-    //         scanMessageEl.textContent = "Successfully scanned card";
-    //         scanMessageEl.classList.remove("scan-error");
-    //         scanMessageEl.classList.add("scan-success");
-
-    //         // Redirect or perform login action
-    //         window.location.href = "/viewPage";
-    //       } else {
-    //         // Keycard validation failed
-    //         scanMessageEl.textContent = "Invalid keycard";
-    //         scanMessageEl.classList.remove("scan-success");
-    //         scanMessageEl.classList.add("scan-error");
-    //       }
-    //     } catch (error) {
-    //       console.error("Login error:", error);
-    //       scanMessageEl.textContent = "Login failed. Please try again.";
-    //       scanMessageEl.classList.add("scan-error");
-    //     }
-    //   }
-
         const keycardIdInput = document.getElementById("SubmitUserName");
         keycardIdInput.onclick = WaitForKeyCardScan;
 
@@ -149,22 +91,3 @@
     </script>
   </body>
 </html>
-<!--python code:
-@app.route('/validate-username', methods=['POST'])
-def validate_username():
-    data = request.json
-    username = data.get('username')
-    # Check if username exists in database
-    user = User.query.filter_by(username=username).first()
-    return jsonify(exists=bool(user)), 200 if user else 404
-
-@app.route('/validate-keycard', methods=['POST'])
-def validate_keycard():
-    data = request.json
-    username = data.get('username')
-    keycard_id = data.get('keycardId')
-    
-    # Validate keycard matches user's keycard in database
-    user = User.query.filter_by(username=username, keycard=keycard_id).first()
-    return jsonify(valid=bool(user)), 200 if user else 404
--->

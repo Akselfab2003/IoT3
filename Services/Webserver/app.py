@@ -10,6 +10,7 @@ import logging
 from Models.PeopleCounter import PeopleCounter,read_people_counter_from_db,add_new_people_counter_to_db
 from Models.base import Base
 from Models.db import DB_ENGINE
+from Models.Login import Login,add_new_login
 
 Base.metadata.create_all(bind=DB_ENGINE)
 
@@ -75,6 +76,62 @@ def get_people_count():
     return {"timestamps": timestamps, "counts": counts}
 
 
+@app.websocket("/registerKeycard")
+async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
+    if session is None:
+        logger.info("No session cookie found")
+        await websocket.close()
+        return
+    
+    await websocket.accept()
+    
+    userNotdefinedMsg = {"message": "UsernameNotDefined"}
+    plsScanKeycardMsg = {"message": "PleaseScanKeycard"}
+    sessionValidatedMsg = {"message": "SessionValidated"}
+    
+    try:
+        
+        await websocket.send_json(userNotdefinedMsg)
+        response = await websocket.receive_json()
+        
+        if response["username"] == "" or response["username"] is None:
+            await websocket.close()
+            return
+        else:
+            logger.info(f"Received username: {response}")
+        
+        username = response["username"]
+        logger.info(f"Username: {username}")
+        session_store[session]["username"] = username
+        
+        await websocket.send_json(plsScanKeycardMsg)
+        
+        response = await WaitforKeyCard()
+        logger.info(f"Received keycard: {response}")
+
+        if response is None:
+            await websocket.close()
+            return
+        
+        logger.info(f"Received keycard: {response}")
+        newLogin = Login(username=username, keycard=response)
+        add_new_login(newLogin)
+        logger.info(f"Added new login: {newLogin}")
+        
+        await websocket.send_json(sessionValidatedMsg)
+        
+    except TimeoutError as e:
+        logger.error(e)
+        await websocket.send_json("{TimeoutWaiting}")
+        await websocket.close()
+    except Exception as e:
+        logger.error(e)
+        await websocket.send_json("{Error}")
+        await websocket.close()
+    finally:
+        await websocket.close()
+    
+
 @app.websocket("/keycard")
 async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
     if session is None:
@@ -127,4 +184,4 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         await websocket.close()
     finally:
         await websocket.close()
-    
+  

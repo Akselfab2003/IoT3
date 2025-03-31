@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="../static/styles.css" />
+  </head>
+  <body>
+    <h1>Register</h1>
+    <div id="registerForm" class="register-box">
+      <label for="username">Username:</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your username"
+        required
+      />
+      <br />
+      <h3>Scan Keycard or Key fob</h3>
+      <div class="register-box">
+        <img src="../static/scan-icon.png" alt="Scan Icon" class="scan-icon" />
+        <p id="scan-message">
+          Please scan your keycard or key fob to register keycard to your account.
+        </p>
+      </div>
+      <input type="hidden" id="keycard-id" name="keycard-id" />
+      <button id="SubmitUserName">Register</button>
+    </div>
+
+
+    <script>
+        const keycardIdInput = document.getElementById("SubmitUserName");
+        keycardIdInput.onclick = WaitForKeyCardScan;
+
+      async function WaitForKeyCardScan() {
+        // Open a WebSocket connection
+        const socket = new WebSocket("ws://localhost:5000/registerKeycard");
+        const usernameInput = document.getElementById("username");
+        const scanMessageEl = document.getElementById("scan-message");
+     
+        // Handle WebSocket connection opening
+        socket.onopen = () => {
+          console.log("WebSocket connection established.");
+          // Send an initial message to the server
+          const userNotDefinedMessage = { username: usernameInput.value }; // Replace with actual username if available
+          socket.send(JSON.stringify(userNotDefinedMessage));
+        };
+
+        // Handle messages received from the server
+        socket.onmessage = (event) => {
+          const serverMessage = JSON.parse(event.data);
+
+          if (serverMessage.message === "UsernameNotDefined") {
+            console.log("Server requested username.");
+            // Send the username to the server
+            const usernameMessage = { username: usernameInput.value}; // Replace with actual username
+            console.log(JSON.stringify(usernameMessage));
+            socket.send(JSON.stringify(usernameMessage));
+          } else if (serverMessage.message === "PleaseScanKeycard") {
+            console.log("Server requested keycard scan.");
+
+            // Simulate keycard scanning (you can replace this with actual logic)
+            console.log("Simulating keycard scan...");
+          }else if (serverMessage.message == "SessionValidated"){
+            console.log("Session Validated");
+            scanMessageEl.textContent = "Successfully scanned card";
+            alert("Successfully scanned card");
+            window.location.href = "/";
+          }
+           else {
+            console.log("Server response:", serverMessage);
+          }
+        };
+
+        // Handle WebSocket errors
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+        };
+
+        // Handle WebSocket connection closing
+        socket.onclose = () => {
+          console.log("WebSocket connection closed.");
+        };
+      }
+
+    //   // Add event listener to form
+    //   document
+    //     .getElementById("loginForm")
+    //     .addEventListener("submit", handleLogin);
+    </script>
+  </body>
+</html>
