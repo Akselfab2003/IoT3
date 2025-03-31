@@ -1,6 +1,7 @@
 #include <PubSubClient.h>
 #include <wifi_configuration.h>
 #include <DataTransporter.h>
+#include "CacheManager.h"
 
 //remember to change IP address to the IP address of your MQTT broker
 //const char* mqtt_server = "";
@@ -61,10 +62,11 @@ bool PublishData(Topics topic, const char* payload){
 
     bool success = client.publish(topicString, payload);
 
-    if(success){
+    if (success) {
         Serial.println("Data published successfully");
-    }else{
-        Serial.println("Failed to publish data");
+    } else {
+        Serial.println("Failed to publish data. Caching payload.");
+        saveToCache(topic, String(payload));
     }
     return success;
 }

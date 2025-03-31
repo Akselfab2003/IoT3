@@ -37,6 +37,8 @@
 
     InitializeMQTT();
 
+    //PublishData(Topics::RegisterSensor, "{\"id\":\"test_sensor\",\"name\":\"Publish From Cache Test\",\"type\":\"Digital\",\"value\":0}");
+
     //PublishData(Topics::PersonDetected, "System Initialized");
 
     Serial.println("Initializing OLED display...");

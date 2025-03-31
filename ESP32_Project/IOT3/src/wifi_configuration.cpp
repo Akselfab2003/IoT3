@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <wifi_configuration.h>
+#include "CacheManager.h"
 
 //#define  WIFI_SSID  Wifi
 //#define  WIFI_PASS "your_password" 
@@ -20,6 +21,8 @@ void initialize_WiFi(){
     if (WiFi.status() == WL_CONNECTED){
         Serial.println("Connected to WiFi network");
         Serial.println("IP Address: " + WiFi.localIP().toString());
+
+        publishAllCachedData();
     }
 }
 
