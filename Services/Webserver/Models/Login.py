@@ -1,6 +1,6 @@
 from .base import Base
 from sqlalchemy import Column, Integer, String
-from db import get_session
+from .db import get_session
 
 class Login(Base):
     __tablename__ = 'logins'
