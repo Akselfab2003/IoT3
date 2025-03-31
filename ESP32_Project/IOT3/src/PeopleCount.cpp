@@ -56,18 +56,26 @@ void setup1() {
 unsigned long StateLoseLastTrigger = millis();
 unsigned long StateBoardLastTrigger = millis();
 
+int lastStateLose = HIGH;
+int lastStateBoard = HIGH;
+
 void CheckIfPersonEntered() {
   int stateLose = digitalRead(SENSOR_PIN_Lose);
   int stateBoard = digitalRead(SENSOR_PIN_Board);
   unsigned long currentTime = millis();
 
-  // Debug: Log sensor states and timestamps
-  //Serial.println("Debug: Checking sensors...");
-  //Serial.println("State Lose: " + String(stateLose));
-  //Serial.println("State Board: " + String(stateBoard));
-  //Serial.println("Current Time: " + String(currentTime));
-  //Serial.println("Current State: " + String(currentState));
-  //Serial.println("Trigger Time: " + String(triggerTime));
+  if (lastStateLose != stateLose) {
+    lastStateLose = stateLose;
+    SendUpdateForSensorLog("SENSOR_PIN_Lose", stateLose);
+  }
+  if (stateBoard != lastStateBoard) {
+    lastStateBoard = stateBoard;
+    SendUpdateForSensorLog("SENSOR_PIN_Board", stateBoard);
+  }
+
+  //Serial.print("Last state Lose: " + String(lastStateLose) + "Last state Board: " + String(lastStateBoard) + "\n");
+  //Serial.print("State Lose: " + String(stateLose) + " State Board: " + String(stateBoard) + "\n");
+
 
   switch (currentState) {
     case WAITING:
@@ -75,13 +83,9 @@ void CheckIfPersonEntered() {
       if (stateLose == LOW) {
         currentState = SENSOR_A_TRIGGERED;
         triggerTime = currentTime;
-        SendUpdateForSensorLog("SENSOR_PIN_Lose", stateLose);
-        //Serial.println("Debug: Sensor Lose triggered first.");
       } else if (stateBoard == LOW) {
         currentState = SENSOR_B_TRIGGERED;
         triggerTime = currentTime;
-        //Serial.println("Debug: Sensor Board triggered first.");
-        SendUpdateForSensorLog("SENSOR_PIN_Board", stateBoard);
       }
       break;
 
