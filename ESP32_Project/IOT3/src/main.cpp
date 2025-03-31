@@ -6,6 +6,7 @@
   #include <PeopleCount.h>
   #include <wifi_configuration.h>
   #include <DataTransporter.h>
+  #include <NTPTime.h>
 
   // OLED Display
   #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -34,6 +35,8 @@
     setup2();
     
     initialize_WiFi();
+
+    initializeNTP();
 
     InitializeMQTT();
 
