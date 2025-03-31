@@ -10,6 +10,8 @@ import logging
 from Models.PeopleCounter import PeopleCounter,read_people_counter_from_db,add_new_people_counter_to_db
 from Models.base import Base
 from Models.db import DB_ENGINE
+from Models.Sensor import Sensor,read_sensors_definition,add_new_sensor,get_sensor_id_by_name
+from Models.SensorsLog import SensorsLog,read_sensor_log_by_sensor_id,add_new_sensor_log
 from Models.Login import Login,add_new_login
 
 Base.metadata.create_all(bind=DB_ENGINE)
@@ -131,6 +133,50 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
     finally:
         await websocket.close()
     
+
+@app.get("/sensorTriggered")
+def sensor_triggered(request: Request,session: str = Cookie(default=None)):
+    # if session is None:
+    #     return RedirectResponse(url="/")
+    # if validate_session(session) == False:
+    #     return RedirectResponse(url="/")
+    
+    return templates.TemplateResponse("sensorTriggered.html", {"request": request})
+
+
+@app.get("/api/sensors")
+def get_sensors():
+    sensors:list[Sensor] = read_sensors_definition()
+    if not sensors:
+        return {"sensors": []}
+    
+    return {"sensors": [ {"id":sensor.id,"name":sensor.name,"type":sensor.type,"description":sensor.description} for sensor in sensors]}
+    
+@app.get("/api/sensorLogdata/{id}")
+def get_sensors(request: Request,id: int,session: str = Cookie(default=None)):
+    sensorLogData:list[SensorsLog] =read_sensor_log_by_sensor_id(id)
+    if not sensorLogData:
+        return {"sensorLogdata": []}
+
+    timestamps = [entry.timestamp.isoformat() for entry in sensorLogData]
+    values = [entry.value for entry in sensorLogData]
+    return {"timestamps": timestamps, "values": values} 
+
+from datetime import datetime
+
+@app.get("/api/add_test_sensor")
+def Create_test_sensor():
+    sensor = Sensor(name="Test Sensor", type="Test Type", description="Test Description")
+    add_new_sensor(sensor)
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
+    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
+    return {"message": "Sensor added successfully"}
+
+
 
 @app.websocket("/keycard")
 async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
