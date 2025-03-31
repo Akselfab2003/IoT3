@@ -43,9 +43,7 @@ def validate_session(session_id):
     
 @app.get("/")
 def index(request: Request,session: str = Cookie(default=None)):
-    val :list[PeopleCounter]= read_people_counter_from_db()
-
-    response = templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!","PeopleCount":val[-1].people})
+    response = templates.TemplateResponse("index.html",{"request":request,"test": "Hello, World!"})
 
     if session is None or session not in session_store:
         logger.info("No session cookie found")
