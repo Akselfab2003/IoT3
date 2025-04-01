@@ -12,7 +12,7 @@ from Models.base import Base
 from Models.db import DB_ENGINE
 from Models.Sensor import Sensor,read_sensors_definition,add_new_sensor,get_sensor_id_by_name
 from Models.SensorsLog import SensorsLog,read_sensor_log_by_sensor_id,add_new_sensor_log
-from Models.Login import Login,add_new_login
+from Models.Login import Login,add_new_login,login
 
 Base.metadata.create_all(bind=DB_ENGINE)
 
@@ -265,7 +265,13 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
             return
         
         logger.info(f"Received keycard: {response}")
-        session_store[session]["KeyCardValidated"] = True
+        
+        if login(Login(username=username, keycard=response)) == False:
+            await websocket.send_json("{InvalidKeyCard}")
+            await websocket.close()
+            return
+        else:
+            session_store[session]["KeyCardValidated"] = True
         
         await websocket.send_json(sessionValidatedMsg)
         
