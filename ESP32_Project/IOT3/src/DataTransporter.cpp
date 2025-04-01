@@ -70,6 +70,7 @@ bool PublishData(Topics topic, const char* payload){
     if (!MQTT_Connection_status){
         Serial.println("MQTT connection failed. Caching payload.");
         saveToCache(topic, String(payload));
+        mqtt_connected = false;
         return false;
     }
     else if (MQTT_Connection_status && !mqtt_connected )
