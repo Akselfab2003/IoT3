@@ -6,54 +6,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
     <title>SensorTriggered Data</title>
 </head>
+<style>
+    .Charts{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        width: 100%;
+        max-width: 1200px; /* Set a max width for the chart */
+        height: 100%;
+        max-height: 600px; /* Set a max height for the chart */ 
+        margin-bottom: 20px;
+    }
+</style>
 <body>
     <div class="Charts">
+    <h1>Sensor Triggered Data</h1>
+    <p>Data is updated every 5 seconds.</p>
     </div>
 </body>
 <script>
     const charts = document.getElementsByClassName('Charts');
 
-    // const ctx = document.getElementById('peopleChart').getContext('2d');
-    //     const peopleChart = new Chart(ctx, {
-    //         type: 'line',
-    //         data: {
-    //             labels: [], // Timestamps
-    //             datasets: [{
-    //                 label: 'People Count',
-    //                 data: [], // People counts
-    //                 borderColor: 'rgba(75, 192, 192, 1)',
-    //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-    //                 borderWidth: 1,
-    //                 fill: true
-    //             }]
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             maintainAspectRatio: true, /* Ensures the aspect ratio is maintained */
-    //             scales: {
-    //                 x: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'Time'
-    //                     }
-    //                 },
-    //                 y: {
-    //                     title: {
-    //                         display: true,
-    //                         text: 'People Count'
-    //                     },
-    //                     beginAtZero: true
-    //                 }
-    //             }
-    //         }
-    //     });
-    
-
-    
         async function CreateSensorChart(Sensor){
-        try{
+            try{
 
-                console.log(Sensor);
                 var newChart = document.createElement("canvas");
                 newChart.id = `Sensor_${Sensor["id"]}`;
                 document.getElementsByClassName('Charts')[0].appendChild(newChart);
@@ -71,8 +53,9 @@
                             data: [],
                             borderColor: 'rgba(75, 192, 192, 1)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderWidth: 1,
-                            fill: true
+                            borderWidth: 2,
+                            fill: true,
+                            stepped:true,
                         }]
                     },
                     options: {
@@ -90,7 +73,10 @@
                                     display: true,
                                     text: Sensor["name"]
                                 },
-                                beginAtZero: true
+                                beginAtZero: true,
+                                min: -2,
+                                max: 3,
+                                ticks:{stepSize:1}
                             }
                         }
                     }
@@ -116,14 +102,18 @@
                 for (let i = 0; i < container[0].children.length; i++) {
 
                     var element = container[0].children[i];
-                    console.log(element);
+                    
+
+                    if (element.tagName.toUpperCase() !== "CANVAS") {
+                        continue; // Skip if it's not a canvas element
+                    }
+
 
                     id = element.id.split("_")[1];
                     
                     var ctx = document.getElementById(element.id).getContext('2d');
                     var chart = Chart.getChart(ctx); // Get the chart instance
                     
-                    console.log(id);
                     var data = await FetchSensorLogData(id);
 
                     chart.data.labels = data["timestamps"];
@@ -147,7 +137,6 @@
                     throw new Error('Failed to fetch data');
                 }
                 var data = await response.json();
-                console.log(data);
                 return data;
 
             }
@@ -166,7 +155,6 @@
 
                 for (let i = 0; i < data["sensors"].length; i++) {
                     var element = data["sensors"][i];
-                    console.log(element);
                     CreateSensorChart(element);
                 }
         
@@ -176,7 +164,7 @@
         }
 
         // Fetch data every 2 seconds
-        setInterval(UpdateData, 2000);
+        setInterval(UpdateData, 5000);
         fetchSensors(); // Initial fetch
 </script>
 </html>

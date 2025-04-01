@@ -134,12 +134,12 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         await websocket.close()
     
 
-@app.get("/sensorTriggered")
+@app.get("/sensors")
 def sensor_triggered(request: Request,session: str = Cookie(default=None)):
-    # if session is None:
-    #     return RedirectResponse(url="/")
-    # if validate_session(session) == False:
-    #     return RedirectResponse(url="/")
+    if session is None:
+        return RedirectResponse(url="/")
+    if validate_session(session) == False:
+        return RedirectResponse(url="/")
     
     return templates.TemplateResponse("sensorTriggered.html", {"request": request})
 
