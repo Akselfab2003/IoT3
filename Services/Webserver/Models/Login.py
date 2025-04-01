@@ -10,28 +10,29 @@ class Login(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(255), nullable=False)
     keycard = Column(String(255), nullable=False)
-    
 
     def __init__(self, username, keycard):
         self.username = username
-        self.keycard = self.hash_keycard(keycard)
+        self.keycard = keycard
     
-    @staticmethod
-    def hash_keycard(keycard):
-        ph = PasswordHasher()
-        return ph.hash(keycard)
-    
-    @staticmethod
-    def verify_keycard(hashed_keycard, keycard):
-        ph = PasswordHasher()
-        try:
-            return ph.verify(hashed_keycard, keycard)
-        except Exception as e:
-            print(f"Error verifying keycard: {e}")
-            return False
+
+
+
+def hash_keycard(keycard):
+    ph = PasswordHasher()
+    return ph.hash(keycard)
+
+def verify_keycard(hashed_keycard, keycard):
+    ph = PasswordHasher()
+    try:
+        return ph.verify(hashed_keycard, keycard)
+    except Exception as e:
+        print(f"Error verifying keycard: {e}")
+        return False
 
 def add_new_login(login:Login):
     with get_session() as session:
+        login.keycard = hash_keycard(login.keycard)
         session.add(login)
 
 
@@ -47,7 +48,7 @@ def login(login:Login,logger:logging.Logger):
             
             logger.info(f"User found: {login.username} - keycard: {logins.keycard}")
             logger.info(f"Login user {login.username} - keycard: {login.keycard}")
-            if Login.verify_keycard(logins.keycard, login.keycard):
+            if verify_keycard(logins.keycard, login.keycard):
                 return True
             
             return False
