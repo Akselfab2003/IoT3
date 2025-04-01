@@ -56,6 +56,19 @@ def index(request: Request,session: str = Cookie(default=None)):
     
     return response
 
+@app.get("/register")
+def register(request: Request, session: str = Cookie(default=None)):
+    response = templates.TemplateResponse("register.html", {"request": request})
+    
+    if session is None or session not in session_store:
+        logger.info("No session cookie found or session is invalid")
+        # Create a new session and allow the user to proceed
+        session_id = create_session()
+        logger.info(f"Created new session with id {session_id}")
+        response = templates.TemplateResponse("register.html", {"request": request})
+        response.set_cookie(key="session", value=session_id, httponly=True, max_age=3600, secure=True)
+        return response
+    
 @app.get("/viewpage")
 def view_page(request: Request,session: str = Cookie(default=None)):
     if session is None:
