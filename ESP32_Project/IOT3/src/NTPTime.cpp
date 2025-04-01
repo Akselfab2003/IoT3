@@ -30,5 +30,5 @@ String getFormattedDateTime() {
 
 unsigned long getEpochTime() {
     timeClient.update();
-    unsigned long epochTime = timeClient.getEpochTime();
+    return timeClient.getEpochTime();
 }
