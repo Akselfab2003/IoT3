@@ -24,7 +24,11 @@ void InitializeMQTT(){
 
     client.setClient(espClient);
     client.setServer(mqtt_server, mqtt_port);
-    client.connect("ESP32Client");
+   
+    unsigned long startAttemptTime = millis();
+    while (!client.connected() && (millis() - startAttemptTime < 500)) { // 1-second timeout
+        client.connect("ESP32Client");
+    }
 
     unsigned long afterInit = millis();
     Serial.println("After MQTT client initialization: " + String(afterInit));
