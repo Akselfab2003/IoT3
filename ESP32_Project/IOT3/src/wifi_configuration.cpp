@@ -12,7 +12,7 @@ void initialize_WiFi(){
     Serial.println("Attempting to connect to WiFi network");
     Serial.println("SSID: " + String(WIFI_SSID));
     WiFi.begin(WIFI_SSID,WIFI_PASS);
-
+    WiFi.setAutoReconnect(true);
 
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -32,8 +32,13 @@ void initialize_WiFi(){
 
 
 void EnsureWiFiConnection(){
+    unsigned long start = millis();
+    Serial.println("Starting WiFi connection check at: " + String(start));
+
     if(WiFi.status() != WL_CONNECTED){
         Serial.println("WiFi connection lost. Attempting to reconnect...");
         initialize_WiFi();
     }
+    Serial.println("Total time for EnsureWiFiConnection: " + String(millis() - start) + " ms");
+
 }

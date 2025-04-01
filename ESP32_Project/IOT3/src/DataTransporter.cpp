@@ -19,9 +19,16 @@ void InitializeMQTT(){
     Serial.println("Server: " + String(mqtt_server));
     Serial.println("Port: " + String(mqtt_port));
 
+    unsigned long beforeInit = millis();
+    Serial.println("Before MQTT client initialization: " + String(beforeInit));
+
     client.setClient(espClient);
     client.setServer(mqtt_server, mqtt_port);
     client.connect("ESP32Client");
+
+    unsigned long afterInit = millis();
+    Serial.println("After MQTT client initialization: " + String(afterInit));
+    Serial.println("Time taken for MQTT client initialization: " + String(afterInit - beforeInit) + " ms");
 
 }
 
