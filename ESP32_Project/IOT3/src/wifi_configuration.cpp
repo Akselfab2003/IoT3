@@ -39,6 +39,9 @@ void EnsureWiFiConnection(){
         Serial.println("WiFi connection lost. Attempting to reconnect...");
         initialize_WiFi();
     }
-    Serial.println("Total time for EnsureWiFiConnection: " + String(millis() - start) + " ms");
+
+    unsigned long end = millis();
+
+    Serial.println("Total time for EnsureWiFiConnection: " + String(end - start) + " ms");
 
 }
