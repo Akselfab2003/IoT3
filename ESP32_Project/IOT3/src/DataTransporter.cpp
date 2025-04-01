@@ -2,7 +2,6 @@
 #include <wifi_configuration.h>
 #include <DataTransporter.h>
 #include "CacheManager.h"
-
 //remember to change IP address to the IP address of your MQTT broker
 //const char* mqtt_server = "";
 const int   mqtt_port = 1883;
@@ -27,16 +26,18 @@ void InitializeMQTT(){
 }
 
 bool EnsureMQTTConnection(){
+    unsigned long current = millis();
+    
+    Serial.println("Starting MQTT connection check Start:"+String(current));
     if(!client.connected()){
-        Serial.println("MQTT connection lost. Attempting to reconnect...");
+        Serial.println("MQTT connection lost. Before InitializeMQTT:" +String(current));
         InitializeMQTT();
+        Serial.println("MQTT connection lost. After InitializeMQTT:" +String(current));
     }
 
     if (&client != nullptr && client.connected()){
-        Serial.println("MQTT connection established.");
         return true;
     }
-    Serial.println("Failed to connect to MQTT broker.");
     return false;
 }
 
