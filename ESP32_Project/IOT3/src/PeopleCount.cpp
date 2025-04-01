@@ -19,7 +19,7 @@ enum MovementState {
 
 MovementState currentState = WAITING;
 unsigned long triggerTime = 0;
-const unsigned long   timeWindow = 500; // Time window in milliseconds for a valid sequence
+const unsigned long   timeWindow = 1000; // Time window in milliseconds for a valid sequence
 
 int peopleCount = 0;
 String createJsonBody(Move_Sensor sensor);
