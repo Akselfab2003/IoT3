@@ -13,11 +13,6 @@ void initialize_WiFi(){
     Serial.println("SSID: " + String(WIFI_SSID));
     WiFi.begin(WIFI_SSID,WIFI_PASS);
 
-    while(WiFi.status() != WL_CONNECTED){
-        delay(500);
-        Serial.print(".");
-    }
-
     if (WiFi.status() == WL_CONNECTED){
         Serial.println("Connected to WiFi network");
         Serial.println("IP Address: " + WiFi.localIP().toString());
