@@ -25,21 +25,31 @@ void InitializeMQTT(){
 
 }
 
-bool EnsureMQTTConnection(){
-    unsigned long current = millis();
-    
-    Serial.println("Starting MQTT connection check Start:"+String(current));
-    if(!client.connected()){
-        current = millis();
-        Serial.println("MQTT connection lost. Before InitializeMQTT:" +String(current));
+bool EnsureMQTTConnection() {
+    unsigned long start = millis();
+    Serial.println("Starting MQTT connection check at: " + String(start));
+
+    if (!client.connected()) {
+        unsigned long beforeInit = millis();
+        Serial.println("MQTT connection lost. Before InitializeMQTT: " + String(beforeInit));
+        
         InitializeMQTT();
-        current = millis();
-        Serial.println("MQTT connection lost. After InitializeMQTT:" +String(current));
+        
+        unsigned long afterInit = millis();
+        Serial.println("MQTT connection lost. After InitializeMQTT: " + String(afterInit));
+        Serial.println("Time taken for InitializeMQTT: " + String(afterInit - beforeInit) + " ms");
     }
 
-    if (&client != nullptr && client.connected()){
+    if (&client != nullptr && client.connected()) {
+        unsigned long end = millis();
+        Serial.println("MQTT connection check successful at: " + String(end));
+        Serial.println("Total time for EnsureMQTTConnection: " + String(end - start) + " ms");
         return true;
     }
+
+    unsigned long end = millis();
+    Serial.println("MQTT connection check failed at: " + String(end));
+    Serial.println("Total time for EnsureMQTTConnection: " + String(end - start) + " ms");
     return false;
 }
 
