@@ -12,4 +12,6 @@ String getFormattedTime();
 // Function to get the current epoch time
 unsigned long getEpochTime();
 
+String getFormattedDateTime();
+
 #endif

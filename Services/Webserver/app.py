@@ -79,21 +79,22 @@ def get_people_counter_statistics():
     if not val or len(val) == 0:
         return {"entered": 0, "people": 0, "exited": 0}
     
+    val.sort(key=lambda x: x.timestamp)
+    
     entered = 0
     exited = 0
+    previous_count = val[0].people
     
-    iterval = 0
-    
-    for entry in val:
-        if iterval == 0:
-            iterval = entry.people
-        if entry.people > iterval:
-            entered += entry.people - iterval
-            iterval = entry.people
-        elif entry.people < iterval:
-            exited += iterval - entry.people
-            iterval = entry.people
-            
+    for entry in val[1:]:
+        if entry.people > previous_count:
+            entered += entry.people - previous_count
+        elif entry.people < previous_count:
+            exited += previous_count - entry.people
+        previous_count = entry.people
+        
+    if len(val) == 1:
+        entered = val[0].people
+        exited = 0
     return {"entered": entered, "total_inside": val[-1].people, "exited": exited}
         
         
