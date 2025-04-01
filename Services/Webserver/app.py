@@ -240,6 +240,7 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
     userNotdefinedMsg = {"message": "UsernameNotDefined"}
     plsScanKeycardMsg = {"message": "PleaseScanKeycard"}
     sessionValidatedMsg = {"message": "SessionValidated"}
+    InvalidKeyCard = {"message": "InvalidKeyCard"}
     
     try:
         
