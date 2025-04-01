@@ -64,6 +64,11 @@ def view_page(request: Request,session: str = Cookie(default=None)):
         return RedirectResponse(url="/")
     
     val :list[PeopleCounter]= read_people_counter_from_db()
+    
+    if not val or len(val) == 0:
+        logger.info("No people counter data found")
+        return templates.TemplateResponse("viewPage.html", {"request": request, "people_count": 0})
+    
     return templates.TemplateResponse("viewPage.html", {"request": request, "people_count": val[-1].people})
 
 
