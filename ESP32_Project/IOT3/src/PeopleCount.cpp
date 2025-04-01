@@ -7,7 +7,7 @@
 #include <MovementSensor.h>
 #include <PeopleCounter.h>
 #include <SensorsLog.h>
-
+#include <NTPTime.h>
 #define SENSOR_PIN_Lose 34    
 #define SENSOR_PIN_Board 35
 
@@ -197,5 +197,7 @@ String GetCurrentTimeMQTT(time_t timestamp){
   char formattedTime[20];
   strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", &timeinfo);
   Serial.println(formattedTime);
-  return String(formattedTime);
+
+  
+  return getFormattedDateTime();
 }

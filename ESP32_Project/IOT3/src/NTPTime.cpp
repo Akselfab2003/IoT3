@@ -19,6 +19,16 @@ String getFormattedTime() {
     return timeClient.getFormattedTime(); // Returns time in HH:MM:SS format
 }
 
+String getFormattedDateTime(){
+
+    time_t now = getEpochTime(); 
+    struct tm *timeinfo = localtime(&now);
+    char buffer[25];
+
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    return String(buffer); 
+}
+
 unsigned long getEpochTime() {
     timeClient.update();
     return timeClient.getEpochTime(); // Returns epoch time (seconds since Jan 1, 1970)
