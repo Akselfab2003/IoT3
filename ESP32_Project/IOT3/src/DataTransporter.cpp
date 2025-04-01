@@ -9,6 +9,8 @@ const int   mqtt_port = 1883;
 
 PubSubClient client;
 
+bool mqtt_connected = true;
+
 void InitializeMQTT(){
 
     Serial.println("Ensuring WiFi connection...");
@@ -24,11 +26,18 @@ void InitializeMQTT(){
 
 }
 
-void EnsureMQTTConnection(){
+bool EnsureMQTTConnection(){
     if(!client.connected()){
         Serial.println("MQTT connection lost. Attempting to reconnect...");
         InitializeMQTT();
     }
+
+    if (&client != nullptr && client.connected()){
+        Serial.println("MQTT connection established.");
+        return true;
+    }
+    Serial.println("Failed to connect to MQTT broker.");
+    return false;
 }
 
 const char* GetSelectedTopic(Topics topic){
@@ -48,8 +57,9 @@ const char* GetSelectedTopic(Topics topic){
 
 bool PublishData(Topics topic, const char* payload){
 
-    EnsureMQTTConnection();
+    bool MQTT_Connection_status = EnsureMQTTConnection();
     
+
     const char* topicString = GetSelectedTopic(topic);
 
     if (topicString == ""){
@@ -57,16 +67,30 @@ bool PublishData(Topics topic, const char* payload){
         return false;
     }
 
-    Serial.println("Publishing data to topic: " + String(topicString));
-    Serial.println("Payload: " + String(payload));
-
-    bool success = client.publish(topicString, payload);
-
-    if (success) {
-        Serial.println("Data published successfully");
-    } else {
-        Serial.println("Failed to publish data. Caching payload.");
+    if (!MQTT_Connection_status){
+        Serial.println("MQTT connection failed. Caching payload.");
         saveToCache(topic, String(payload));
+        mqtt_connected = false;
+        return false;
     }
-    return success;
+    else if (MQTT_Connection_status && !mqtt_connected )
+    {
+        Serial.println("MQTT connection established. Publishing cached data.");
+        publishAllCachedData();
+        mqtt_connected = true;
+    }
+    if(MQTT_Connection_status)
+    {
+
+        Serial.println("Publishing data to topic: " + String(topicString));
+        Serial.println("Payload: " + String(payload));
+
+        bool success = client.publish(topicString, payload);
+
+        if (success) {
+            Serial.println("Data published successfully");
+        }
+
+        return success;
+    }
 }

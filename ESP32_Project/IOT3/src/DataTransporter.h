@@ -10,7 +10,7 @@ enum class Topics{
 
 void InitializeMQTT();
 
-void EnsureMQTTConnection();
+bool EnsureMQTTConnection();
 
 bool PublishData(Topics topic, const char* payload);
 
