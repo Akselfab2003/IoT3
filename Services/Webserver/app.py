@@ -248,7 +248,6 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         response = await websocket.receive_json()
         
         if response["username"] == "" or response["username"] is None:
-            await websocket.close()
             return
         else:
             logger.info(f"Received username: {response}")
@@ -263,28 +262,24 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         logger.info(f"Received keycard: {response}")
 
         if response is None:
-            await websocket.close()
             return
         
         logger.info(f"Received keycard: {response}")
         
         if login(Login(username=username, keycard=response)) == False:
             await websocket.send_json("{InvalidKeyCard}")
-            await websocket.close()
+            logger.info("Invalid keycard")
             return
         else:
             session_store[session]["KeyCardValidated"] = True
-        
+            logger.info("Keycard validated")
         await websocket.send_json(sessionValidatedMsg)
+        logger.info("Session validated")
+
         
     except TimeoutError as e:
         logger.error(e)
         await websocket.send_json("{TimeoutWaiting}")
-        await websocket.close()
     except Exception as e:
         logger.error(e)
         await websocket.send_json("{Error}")
-        await websocket.close()
-    finally:
-        await websocket.close()
-  

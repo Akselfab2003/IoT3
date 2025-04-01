@@ -31,18 +31,15 @@
     // put your setup code here, to run once:
 
     Serial.begin(115200);
-    setup1();
-    setup2();
-    
+
     initialize_WiFi();
 
     initializeNTP();
 
     InitializeMQTT();
 
-    //PublishData(Topics::RegisterSensor, "{\"id\":\"test_sensor\",\"name\":\"Publish From Cache Test\",\"type\":\"Digital\",\"value\":0}");
-
-    //PublishData(Topics::PersonDetected, "System Initialized");
+    setup1();
+    setup2();
 
     Serial.println("Initializing OLED display...");
     if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -66,12 +63,12 @@
 
   void loop() {
 
-    ProcessMQTT();
-
     updateDisplay();
     //PublishData(Topics::PersonDetected, "System Initialized");
     //loop1();
     CheckIfPersonEntered();
+
+    ProcessMQTT();
     
     loop2();  
   }
