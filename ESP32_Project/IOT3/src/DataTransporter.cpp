@@ -9,6 +9,8 @@ const int   mqtt_port = 1883;
 
 PubSubClient client;
 
+bool mqtt_connected = true;
+
 void InitializeMQTT(){
 
     Serial.println("Ensuring WiFi connection...");
@@ -31,6 +33,7 @@ bool EnsureMQTTConnection(){
     }
 
     if (&client != nullptr && client.connected()){
+        Serial.println("MQTT connection established.");
         return true;
     }
     Serial.println("Failed to connect to MQTT broker.");
@@ -56,6 +59,7 @@ bool PublishData(Topics topic, const char* payload){
 
     bool MQTT_Connection_status = EnsureMQTTConnection();
     
+
     const char* topicString = GetSelectedTopic(topic);
 
     if (topicString == ""){
@@ -68,8 +72,14 @@ bool PublishData(Topics topic, const char* payload){
         saveToCache(topic, String(payload));
         return false;
     }
-    else{
-
+    else if (MQTT_Connection_status && !mqtt_connected )
+    {
+        Serial.println("MQTT connection established. Publishing cached data.");
+        publishAllCachedData();
+        mqtt_connected = true;
+    }
+    if(MQTT_Connection_status)
+    {
 
         Serial.println("Publishing data to topic: " + String(topicString));
         Serial.println("Payload: " + String(payload));
@@ -78,10 +88,8 @@ bool PublishData(Topics topic, const char* payload){
 
         if (success) {
             Serial.println("Data published successfully");
-        } else {
-            Serial.println("Failed to publish data. Caching payload.");
-            saveToCache(topic, String(payload));
         }
+
         return success;
     }
 }
