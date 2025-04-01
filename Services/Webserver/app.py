@@ -266,7 +266,7 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
         
         logger.info(f"Received keycard: {response}")
         
-        if login(Login(username=username, keycard=response)) == False:
+        if login(Login(username=username, keycard=response), logger) == False:
             await websocket.send_json("{InvalidKeyCard}")
             logger.info("Invalid keycard")
             return
