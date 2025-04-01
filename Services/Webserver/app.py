@@ -72,6 +72,36 @@ def view_page(request: Request,session: str = Cookie(default=None)):
     return templates.TemplateResponse("viewPage.html", {"request": request, "people_count": val[-1].people})
 
 
+@app.get("/api/people_counter_statistics")
+def get_people_counter_statistics():
+    val: list[PeopleCounter] = read_people_counter_from_db()
+    
+    if not val or len(val) == 0:
+        return {"entered": 0, "people": 0, "exited": 0}
+    
+    entered = 0
+    exited = 0
+    
+    iterval = 0
+    
+    for entry in val:
+        if iterval == 0:
+            iterval = entry.people
+        if entry.people > iterval:
+            entered += entry.people - iterval
+            iterval = entry.people
+        elif entry.people < iterval:
+            exited += iterval - entry.people
+            iterval = entry.people
+            
+    return {"entered": entered, "total_inside": val[-1].people, "exited": exited}
+        
+        
+    
+    
+    
+
+
 @app.get("/api/people_count")
 def get_people_count():
     val: list[PeopleCounter] = read_people_counter_from_db()

@@ -3,7 +3,6 @@ body {
     flex-direction: column; /* Stack items vertically */
     justify-content: center;
     align-items: center;
-    height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
     text-align: center;
@@ -54,7 +53,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 50px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .stat {

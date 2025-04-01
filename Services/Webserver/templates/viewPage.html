@@ -9,14 +9,24 @@
     <style>
         /* Add CSS to scale the canvas */
         #peopleChart {
-            max-width: 100%;
-            height: auto;
+      
+            width: 100%;
+            max-width: 85%; /* Set a max width for the chart */
+            height: 100%;
+            max-height: 600px; /* Set a max height for the chart */ 
+            margin-bottom: 20px;
         }
 
         .chart-container {
-            width: 80%; /* Adjust the width as needed */
-            margin: 0 auto; /* Center the chart */
+           
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+            
         }
+        
     </style>
 </head>
 <body>
@@ -27,7 +37,7 @@
         </div>
         <div class="stat">
             <div class="stat-icon">🏢</div>
-            <p>Total Inside: <span id="total-count">{{people_count}}</span></p>
+            <p>Total Inside: <span id="total-count">0</span></p>
         </div>
         <div class="stat">
             <div class="stat-icon">🚶</div>
@@ -39,6 +49,9 @@
     </div>
 
     <script>
+        const exitCountEl = document.getElementById('exit-count');
+        const enterCountEl = document.getElementById('enter-count');
+        const totalCountEl = document.getElementById('total-count');
         const ctx = document.getElementById('peopleChart').getContext('2d');
         const peopleChart = new Chart(ctx, {
             type: 'line',
@@ -91,9 +104,31 @@
             }
         }
 
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/people_counter_statistics');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+
+                exitCountEl.textContent = data.exited;
+                enterCountEl.textContent = data.entered;
+                totalCountEl.textContent = data.total_inside;
+             
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function fetchAllData() {
+            await fetchData();
+            await fetchStats();
+        }
+
         // Fetch data every 2 seconds
-        setInterval(fetchData, 2000);
-        fetchData(); // Initial fetch
+        setInterval(fetchAllData, 2000);
+        fetchAllData(); // Initial fetch
     </script>
 </body>
 </html>
