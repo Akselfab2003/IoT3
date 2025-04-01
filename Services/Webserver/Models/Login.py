@@ -2,6 +2,7 @@ from .base import Base
 from sqlalchemy import Column, Integer, String
 from .db import get_session
 from argon2 import PasswordHasher
+import logging
 
 class Login(Base):
     __tablename__ = 'logins'
@@ -34,12 +35,18 @@ def add_new_login(login:Login):
         session.add(login)
 
 
-def login(login:Login):
+def login(login:Login,logger:logging.Logger):
     with get_session() as session:
         try:
             logins = session.query(Login).filter(Login.username == login.username).first()
+            logger.info(f"Login attempt for user: {login.username}")
+            
             if logins is None:
+                logger.warning(f"Login failed for user: {login.username} - User not found")
                 return False
+            
+            logger.info(f"User found: {login.username} - keycard: {logins.keycard}")
+            logger.info(f"Login user {login.username} - keycard: {login.keycard}")
             if Login.verify_keycard(logins.keycard, login.keycard):
                 return True
             
