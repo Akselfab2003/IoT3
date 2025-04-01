@@ -3,7 +3,7 @@ import json
 import paho.mqtt.client as mqtt
 import logging
 from Models.PeopleCounter import PeopleCounter,add_new_people_counter_to_db
-from Models.Sensor import Sensor,add_new_sensor,get_sensor_id_by_name
+from Models.Sensor import Sensor,register_sensor,get_sensor_id_by_name
 from Models.SensorsLog import SensorsLog,add_new_sensor_log
 from datetime import datetime
 
@@ -69,7 +69,7 @@ def RegisterSensor(payload: str):
     )
     
     logger.info(f"Sensor: {sensor} registered")
-    add_new_sensor(sensor)
+    register_sensor(sensor)
     
 def SensorTriggered(payload:str):
     sensorLogUpdate = json.loads(payload)
