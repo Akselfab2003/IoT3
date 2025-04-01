@@ -14,4 +14,6 @@ bool EnsureMQTTConnection();
 
 bool PublishData(Topics topic, const char* payload);
 
+void ProcessMQTT();
+
 #endif

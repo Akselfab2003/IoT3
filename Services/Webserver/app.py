@@ -68,6 +68,7 @@ def register(request: Request, session: str = Cookie(default=None)):
         response = templates.TemplateResponse("register.html", {"request": request})
         response.set_cookie(key="session", value=session_id, httponly=True, max_age=3600, secure=True)
         return response
+    return response
     
 @app.get("/viewpage")
 def view_page(request: Request,session: str = Cookie(default=None)):

@@ -80,6 +80,7 @@ void publishCachedDataForTopic(Topics topic) {
          String line = file.readStringUntil('\n');
          if (line.length() == 0) continue;
          bool success = PublishData(topic, line.c_str());
+         delay(100);
          if (!success) {
             Serial.println("Failed to publish cached message: " + line);
          }

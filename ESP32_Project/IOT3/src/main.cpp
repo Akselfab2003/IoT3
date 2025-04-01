@@ -66,10 +66,13 @@
 
   void loop() {
 
+    ProcessMQTT();
+
     updateDisplay();
     //PublishData(Topics::PersonDetected, "System Initialized");
     //loop1();
     CheckIfPersonEntered();
+    
     loop2();  
   }
  

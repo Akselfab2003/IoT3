@@ -36,31 +36,11 @@ void InitializeMQTT(){
 }
 
 bool EnsureMQTTConnection() {
-    unsigned long start = millis();
-    Serial.println("Starting MQTT connection check at: " + String(start));
-
     if (!client.connected()) {
-        unsigned long beforeInit = millis();
-        Serial.println("MQTT connection lost. Before InitializeMQTT: " + String(beforeInit));
-        
-        InitializeMQTT();
-        
-        unsigned long afterInit = millis();
-        Serial.println("MQTT connection lost. After InitializeMQTT: " + String(afterInit));
-        Serial.println("Time taken for InitializeMQTT: " + String(afterInit - beforeInit) + " ms");
+        Serial.println("MQTT connection lost. Skipping synchronous reconnect.");
+        return false;
     }
-
-    if (&client != nullptr && client.connected()) {
-        unsigned long end = millis();
-        Serial.println("MQTT connection check successful at: " + String(end));
-        Serial.println("Total time for EnsureMQTTConnection: " + String(end - start) + " ms");
-        return true;
-    }
-
-    unsigned long end = millis();
-    Serial.println("MQTT connection check failed at: " + String(end));
-    Serial.println("Total time for EnsureMQTTConnection: " + String(end - start) + " ms");
-    return false;
+    return true;
 }
 
 const char* GetSelectedTopic(Topics topic){
@@ -78,42 +58,52 @@ const char* GetSelectedTopic(Topics topic){
     }
 }
 
-bool PublishData(Topics topic, const char* payload){
-
-    bool MQTT_Connection_status = EnsureMQTTConnection();
+bool PublishData(Topics topic, const char* payload) {
+    // Check MQTT connection without trying to reconnect synchronously
+    bool mqttStatus = EnsureMQTTConnection();
     
-
     const char* topicString = GetSelectedTopic(topic);
-
-    if (topicString == ""){
+    if (topicString == nullptr || String(topicString) == "") {
         Serial.println("Invalid topic");
         return false;
     }
-
-    if (!MQTT_Connection_status){
-        Serial.println("MQTT connection failed. Caching payload.");
+    
+    if (!mqttStatus) {
+        Serial.println("MQTT connection not available. Caching payload.");
         saveToCache(topic, String(payload));
         mqtt_connected = false;
         return false;
-    }
-    else if (MQTT_Connection_status && !mqtt_connected )
-    {
-        Serial.println("MQTT connection established. Publishing cached data.");
+    } 
+    // If connection is back after a previous outage, publish cached data
+    else if (mqttStatus && !mqtt_connected) {
+        Serial.println("MQTT connection re-established. Publishing cached data.");
         publishAllCachedData();
         mqtt_connected = true;
     }
-    if(MQTT_Connection_status)
-    {
+    
+    Serial.println("Publishing data to topic: " + String(topicString));
+    Serial.println("Payload: " + String(payload));
+    
+    bool success = client.publish(topicString, payload);
+    if (success) {
+        Serial.println("Data published successfully");
+    }
+    return success;
+}
 
-        Serial.println("Publishing data to topic: " + String(topicString));
-        Serial.println("Payload: " + String(payload));
-
-        bool success = client.publish(topicString, payload);
-
-        if (success) {
-            Serial.println("Data published successfully");
+void ProcessMQTT() {
+    // Process MQTT client loop to handle incoming/outgoing messages.
+    client.loop();
+    
+    // Attempt reconnect every 5 seconds if not connected.
+    static unsigned long lastReconnectAttempt = 0;
+    if (!client.connected() && (millis() - lastReconnectAttempt > 5000)) {
+        Serial.println("Attempting background MQTT reconnect...");
+        if (client.connect("ESP32Client")) {
+            Serial.println("Background MQTT reconnect successful.");
+            mqtt_connected = true;
+            publishAllCachedData();
         }
-
-        return success;
+        lastReconnectAttempt = millis();
     }
 }
