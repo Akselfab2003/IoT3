@@ -30,8 +30,10 @@ bool EnsureMQTTConnection(){
     
     Serial.println("Starting MQTT connection check Start:"+String(current));
     if(!client.connected()){
+        current = millis();
         Serial.println("MQTT connection lost. Before InitializeMQTT:" +String(current));
         InitializeMQTT();
+        current = millis();
         Serial.println("MQTT connection lost. After InitializeMQTT:" +String(current));
     }
 
