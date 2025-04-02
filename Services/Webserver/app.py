@@ -230,21 +230,53 @@ def get_sensors(request: Request,id: int,session: str = Cookie(default=None)):
     values = [entry.value for entry in sensorLogData]
     return {"timestamps": timestamps, "values": values} 
 
-from datetime import datetime
+@app.websocket("/registerKeycard")
+async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
+    if session is None:
+        logger.info("No session cookie found")
+        return
+    
+    await websocket.accept()
+    
+    userNotdefinedMsg = {"message": "UsernameNotDefined"}
+    plsScanKeycardMsg = {"message": "PleaseScanKeycard"}
+    sessionValidatedMsg = {"message": "SessionValidated"}
+    
+    try:
+        
+        await websocket.send_json(userNotdefinedMsg)
+        response = await websocket.receive_json()
+        
+        if response["username"] == "" or response["username"] is None:
+            return
+        else:
+            logger.info(f"Received username: {response}")
+        
+        username = response["username"]
+        logger.info(f"Username: {username}")
+        session_store[session]["username"] = username
+        
+        await websocket.send_json(plsScanKeycardMsg)
+        
+        response = await WaitforKeyCard()
+        logger.info(f"Received keycard: {response}")
 
-# API endpoint to create a test sensor and log data
-@app.get("/api/add_test_sensor")
-def Create_test_sensor():
-    sensor = Sensor(name="Test Sensor", type="Test Type", description="Test Description")
-    add_new_sensor(sensor)
-    # Add test sensor logs
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=1.0, timestamp=datetime.now()))
-    add_new_sensor_log(SensorsLog(sensor_id=1, value=0.0, timestamp=datetime.now()))
-    return {"message": "Sensor added successfully"}
+        if response is None:
+            return
+        
+        logger.info(f"Received keycard: {response}")
+        newLogin = Login(username=username, keycard=response)
+        add_new_login(newLogin)
+        logger.info(f"Added new login: {newLogin}")
+        
+        await websocket.send_json(sessionValidatedMsg)
+        
+    except TimeoutError as e:
+        logger.error(e)
+        await websocket.send_json("{TimeoutWaiting}")
+    except Exception as e:
+        logger.error(e)
+        await websocket.send_json("{Error}")
 
 
 # WebSocket endpoint for keycard validation
@@ -289,7 +321,7 @@ async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default
 
         # Validate keycard
         if login(Login(username=username, keycard=response), logger) == False:
-            await websocket.send_json("{InvalidKeyCard}")
+            await websocket.send_json(InvalidKeyCard)
             logger.info("Invalid keycard")
             return
         else:

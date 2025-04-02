@@ -2,10 +2,13 @@ import enum
 import json
 import paho.mqtt.client as mqtt
 import logging
+import time
+import asyncio
 from Models.PeopleCounter import PeopleCounter, add_new_people_counter_to_db
 from Models.Sensor import Sensor, register_sensor, get_sensor_id_by_name
 from Models.SensorsLog import SensorsLog, add_new_sensor_log
 from datetime import datetime
+from paho.mqtt.reasoncodes import ReasonCode,ReasonCodes 
 
 # Enum class to define MQTT topics
 class Topic(enum.Enum):
@@ -91,10 +94,23 @@ def SensorTriggered(payload: str):
         value=sensorLogUpdate["SensorLogObject"]["value"],
         timestamp=dateTimestamp
     )
+    add_new_sensor_log(sensorLog)
 
-    add_new_sensor_log(sensorLog)  # Save the sensor log to the database
 
-import asyncio
+def on_disconnect(client, userdata, rc):
+    logger.info("Disconnected from broker")
+    reconnect_delay = 2 # seconds
+    reconnect_count = 0
+    while True:
+        logger.info(f"Attempting to reconnect... {reconnect_count}")
+        time.sleep(reconnect_delay)
+        try:
+            client.reconnect()
+            logger.info("Reconnected successfully")
+            break
+        except Exception as e:
+            logger.error(f"Reconnect failed: {e}")
+        reconnect_count += 1
 
 # Asynchronous function to wait for a keycard detection
 async def WaitforKeyCard():
@@ -131,6 +147,8 @@ def Setup():
     logger.info("Connecting to broker: " + BROKER)
     Client = mqtt.Client() 
     Client.on_message = on_message
+    Client.on_disconnect = on_disconnect
+
     Client.connect(BROKER, PORT, 60)
     Client.subscribe([(e.value, 0) for e in Topic])
     Client.loop_start()
