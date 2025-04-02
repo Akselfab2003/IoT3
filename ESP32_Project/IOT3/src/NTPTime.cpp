@@ -5,7 +5,7 @@
 
 // NTP Client setup
 WiFiUDP ntpUDP; // UDP instance for NTP communication
-NTPClient timeClient(ntpUDP, "pool.ntp.org", -18000, 60000); // UTC-5 (ETC Standard Time), updates every 60 seconds
+NTPClient timeClient(ntpUDP, "dk.pool.ntp.org", -18000, 60000); // UTC-5 (ETC Standard Time), updates every 60 seconds
 
 /**
  * Initializes the NTP client.
