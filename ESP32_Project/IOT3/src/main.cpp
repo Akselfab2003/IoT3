@@ -34,10 +34,10 @@
 
     initializeNTP();
 
-    xTaskCreate(ProcessMQTT,"ProcessMQTT", 10000, NULL, 1, NULL);
-
     InitializeMQTT();
 
+    xTaskCreate(ProcessMQTT,"ProcessMQTT", 10000, NULL, 1, NULL);
+    
     setup1();
     setup2();
 

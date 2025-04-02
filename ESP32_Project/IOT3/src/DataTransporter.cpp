@@ -84,7 +84,7 @@ bool PublishData(Topics topic, const char* payload) {
     }
     
     bool success = false;
-    if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
+    //if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
         Serial.println("Publishing data to topic: " + String(topicString));
         Serial.println("Payload: " + String(payload));
         
@@ -92,14 +92,14 @@ bool PublishData(Topics topic, const char* payload) {
         if (success) {
             Serial.println("Data published successfully");
         }
-        xSemaphoreGive(mqttMutex);
-    }
+        //xSemaphoreGive(mqttMutex);
+    //}
     return success;
 }
 
 void ProcessMQTT(void* param) {
     while(true){
-        if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
+        //if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
             if (client.connected())
             {
                 // Process MQTT client loop to handle incoming/outgoing messages.
@@ -119,8 +119,8 @@ void ProcessMQTT(void* param) {
                     lastReconnectAttempt = millis();
                 }
             }
-            xSemaphoreGive(mqttMutex);
-        }
+            //xSemaphoreGive(mqttMutex);
+        //}
         vTaskDelay(pdMS_TO_TICKS(10));
     }
    

@@ -6,7 +6,7 @@
 //#define  WIFI_PASS "your_password" 
 
 WiFiClient espClient;
-
+void WifiEventHandler(WiFiEvent_t event);
 
 void initialize_WiFi(){
 
@@ -24,7 +24,6 @@ void WifiEventHandler(WiFiEvent_t event){
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
             Serial.println("WiFi connected, IP address: " + WiFi.localIP().toString());
-            publishAllCachedData();
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             Serial.println("WiFi disconnected. Attempting to reconnect...");
