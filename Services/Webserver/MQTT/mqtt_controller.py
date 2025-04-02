@@ -2,11 +2,13 @@ import enum
 import json
 import paho.mqtt.client as mqtt
 import logging
+import time
+import asyncio
 from Models.PeopleCounter import PeopleCounter,add_new_people_counter_to_db
 from Models.Sensor import Sensor,register_sensor,get_sensor_id_by_name
 from Models.SensorsLog import SensorsLog,add_new_sensor_log
 from datetime import datetime
-import asyncio
+from paho.mqtt.reasoncodes import ReasonCode,ReasonCodes 
 
 class Topic(enum.Enum):
     PersonDetected = "PersonDetected"
@@ -18,9 +20,7 @@ logger = logging.getLogger(__name__)
 BROKER = "mosquitto" 
 PORT = 1883
 
-
 logger.info("Connecting to broker: " + BROKER)
-
 
 def on_message(client, userdata, message):
     logger.info(f"Topic: {message.topic} Message: {str(message.payload.decode('utf-8'))}")
@@ -51,8 +51,6 @@ def PersonDetected(payload:str):
         timestamp=dateTimestamp
     )
     
-    #logger.log(json.dumps(peopleCountUpdate, indent=4))
-
     logger.info(f"Timestamp: {peopleCounter.timestamp} Updating people count to: {peopleCounter.people}")
     add_new_people_counter_to_db(peopleCounter)
     
@@ -60,11 +58,9 @@ def PersonDetected(payload:str):
 def RegisterSensor(payload: str):
     sensor_data = json.loads(payload)  # Parse the JSON payload into a dictionary
     logger.info("Register Sensor")
-    # logger.log(json.dumps(sensor_data, indent=4))
     
     # Create a Sensor object from the dictionary
     sensor = Sensor(
-        #id=sensor_data.get("id", 0),  # Default to 0 if 'id' is not provided
         name=sensor_data["name"],
         type=sensor_data["type"],
         description=sensor_data.get("description", "")  # Default to an empty string if 'description' is not provided
@@ -76,7 +72,6 @@ def RegisterSensor(payload: str):
 def SensorTriggered(payload:str):
     sensorLogUpdate = json.loads(payload)
     logger.info("Sensor Triggered")
-    #logger.log(json.dumps(sensorLogUpdate, indent=4))
     
     sensorName = sensorLogUpdate["SensorName"]
     logger.info(f"Sensor: {sensorName} triggered")
@@ -90,13 +85,8 @@ def SensorTriggered(payload:str):
         value=sensorLogUpdate["SensorLogObject"]["value"],
         timestamp=dateTimestamp
     )
-
-    #logger.info(f"Sensor: {sensorLog.sensor_name} triggered")
     add_new_sensor_log(sensorLog)
 
-from paho.mqtt.reasoncodes import ReasonCode,ReasonCodes 
-import time
-            
 
 def on_disconnect(client, userdata, rc):
     logger.info("Disconnected from broker")
