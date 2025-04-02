@@ -99,7 +99,7 @@ def SensorTriggered(payload: str):
 
 def on_disconnect(client, userdata, rc):
     logger.info("Disconnected from broker")
-    reconnect_delay = 2 # seconds
+    reconnect_delay = 0.5 # seconds
     reconnect_count = 0
     while True:
         logger.info(f"Attempting to reconnect... {reconnect_count}")
@@ -107,7 +107,7 @@ def on_disconnect(client, userdata, rc):
         try:
             client.reconnect()
             logger.info("Reconnected successfully")
-            break
+            return
         except Exception as e:
             logger.error(f"Reconnect failed: {e}")
         reconnect_count += 1
@@ -148,6 +148,7 @@ def Setup():
     Client = mqtt.Client() 
     Client.on_message = on_message
     Client.on_disconnect = on_disconnect
+    Client.enable_logger(logger)
 
     Client.connect(BROKER, PORT, 60)
     Client.subscribe([(e.value, 0) for e in Topic])

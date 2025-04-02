@@ -2,8 +2,8 @@
 #define KeyCardScanner_h
 
 
-void setup2();
-void loop2();
+void InitKeycard();
+void KeycardDetection();
 
 
 #endif

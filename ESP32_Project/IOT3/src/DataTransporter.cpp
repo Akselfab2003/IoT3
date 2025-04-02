@@ -92,13 +92,7 @@ bool PublishData(Topics topic, const char* payload) {
         mqtt_connected = false;
         return false;
     } 
-    else if (mqttStatus && !mqtt_connected) {
-        // Publish cached data if MQTT connection is re-established
-        Serial.println("MQTT connection re-established. Publishing cached data.");
-        publishAllCachedData();
-        mqtt_connected = true;
-    }
-    
+
     bool success = false;
     Serial.println("Publishing data to topic: " + String(topicString));
     success = client.publish(topicString, payload);
@@ -125,6 +119,7 @@ void ProcessMQTT(void* param) {
                 if (client.connect("ESP32Client")) {
                     Serial.println("Background MQTT reconnect successful.");
                     mqtt_connected = true;
+                    vTaskDelay(pdMS_TO_TICKS(10000));
                     publishAllCachedData();
                 }
                 lastReconnectAttempt = millis();

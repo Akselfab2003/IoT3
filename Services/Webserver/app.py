@@ -73,9 +73,7 @@ def register(request: Request, session: str = Cookie(default=None)):
         logger.info("No session cookie found or session is invalid")
         # Create a new session and allow the user to proceed
         session_id = create_session()
-        logger.info(f"Created new session wsessionresponse = templates.TemplateResponse("register.html", {"request": request})
-        {sessionresponse = templates.TemplateResponse("register.html", {"request": request})
-        _id}")
+        
         response = templates.TemplateResponse("register.html", {"request": request})
         response.set_cookie(key="session", value=session_id, httponly=True, max_age=3600, secure=True)
         return response

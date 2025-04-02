@@ -2,9 +2,6 @@
 #include <wifi_configuration.h>
 #include <CacheManager.h>
 
-//#define  WIFI_SSID  Wifi
-//#define  WIFI_PASS "your_password" 
-
 WiFiClient espClient;
 void WifiEventHandler(WiFiEvent_t event);
 

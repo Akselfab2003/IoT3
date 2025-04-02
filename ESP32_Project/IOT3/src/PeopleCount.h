@@ -4,8 +4,7 @@
 
 extern int peopleCount;
 
-void setup1();
-void loop1();
+void InitPeopleCounter();
 void CheckIfPersonEntered();
 
 #endif
