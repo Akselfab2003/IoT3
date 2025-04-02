@@ -1,4 +1,5 @@
 #include "OLED.h"
+#include <PeopleCount.h>
 
 // Initialize the OLED display object
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
