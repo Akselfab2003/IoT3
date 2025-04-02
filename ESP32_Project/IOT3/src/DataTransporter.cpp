@@ -10,6 +10,8 @@ PubSubClient client;
 
 bool mqtt_connected = true;
 
+SemaphoreHandle_t mqttMutex = xSemaphoreCreateMutex();
+
 void InitializeMQTT(){
 
     Serial.println("Ensuring WiFi connection...");
@@ -81,29 +83,45 @@ bool PublishData(Topics topic, const char* payload) {
         mqtt_connected = true;
     }
     
-    Serial.println("Publishing data to topic: " + String(topicString));
-    Serial.println("Payload: " + String(payload));
-    
-    bool success = client.publish(topicString, payload);
-    if (success) {
-        Serial.println("Data published successfully");
+    bool success = false;
+    if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
+        Serial.println("Publishing data to topic: " + String(topicString));
+        Serial.println("Payload: " + String(payload));
+        
+        success = client.publish(topicString, payload);
+        if (success) {
+            Serial.println("Data published successfully");
+        }
+        xSemaphoreGive(mqttMutex);
     }
     return success;
 }
 
-void ProcessMQTT() {
-    // Process MQTT client loop to handle incoming/outgoing messages.
-    client.loop();
-    
-    // Attempt reconnect every 5 seconds if not connected.
-    static unsigned long lastReconnectAttempt = 0;
-    if (!client.connected() && (millis() - lastReconnectAttempt > 5000)) {
-        Serial.println("Attempting background MQTT reconnect...");
-        if (client.connect("ESP32Client")) {
-            Serial.println("Background MQTT reconnect successful.");
-            mqtt_connected = true;
-            publishAllCachedData();
+void ProcessMQTT(void* param) {
+    while(true){
+        if (xSemaphoreTake(mqttMutex, portMAX_DELAY)){
+            if (client.connected())
+            {
+                // Process MQTT client loop to handle incoming/outgoing messages.
+                client.loop();
+            }
+            else
+            {
+                // Attempt reconnect every 5 seconds if not connected.
+                static unsigned long lastReconnectAttempt = 0;
+                if (!client.connected() && (millis() - lastReconnectAttempt > 5000)) {
+                    Serial.println("Attempting background MQTT reconnect...");
+                    if (client.connect("ESP32Client")) {
+                        Serial.println("Background MQTT reconnect successful.");
+                        mqtt_connected = true;
+                        publishAllCachedData();
+                    }
+                    lastReconnectAttempt = millis();
+                }
+            }
+            xSemaphoreGive(mqttMutex);
         }
-        lastReconnectAttempt = millis();
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
+   
 }

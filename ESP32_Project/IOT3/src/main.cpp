@@ -22,8 +22,6 @@
 
 
 
-  void ReadSensorLose();
-  void ReadSensorBoard();
   void updateDisplay();
   //void ReadAllValues();
 
@@ -35,6 +33,8 @@
     initialize_WiFi();
 
     initializeNTP();
+
+    xTaskCreate(ProcessMQTT,"ProcessMQTT", 10000, NULL, 1, NULL);
 
     InitializeMQTT();
 
@@ -68,8 +68,6 @@
     //loop1();
     CheckIfPersonEntered();
 
-    ProcessMQTT();
-    
     loop2();  
   }
  
