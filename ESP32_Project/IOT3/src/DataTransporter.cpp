@@ -155,6 +155,7 @@ void ProcessMQTT(void* param) {
         //}
         vTaskDelay(pdMS_TO_TICKS(10));
     }
+}
    
 /**
  * Processes MQTT client tasks.
