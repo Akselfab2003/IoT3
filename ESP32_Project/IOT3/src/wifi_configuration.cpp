@@ -35,16 +35,8 @@ void WifiEventHandler(WiFiEvent_t event){
 }
 
 void EnsureWiFiConnection(){
-    unsigned long start = millis();
-    Serial.println("Starting WiFi connection check at: " + String(start));
-
     if(WiFi.status() != WL_CONNECTED){
         Serial.println("WiFi connection lost. Attempting to reconnect...");
         initialize_WiFi();
     }
-    unsigned long end = millis();
-    Serial.println("Total time for EnsureWiFiConnection: " + String(end - start) + " ms");
-
 }
-
-

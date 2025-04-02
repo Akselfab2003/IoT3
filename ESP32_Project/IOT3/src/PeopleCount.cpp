@@ -38,7 +38,7 @@ String GetCurrentTimeMQTT(time_t timestamp);
  * Initializes the people counting system.
  * Sets up sensor pins and registers the sensors via MQTT.
  */
-void setup1() {
+void InitPeopleCounter() {
   pinMode(SENSOR_PIN_Lose, INPUT);
   pinMode(SENSOR_PIN_Board, INPUT);
   Serial.println("People counter system initialized.");
@@ -49,9 +49,6 @@ void setup1() {
 
   String jsonBody1 = createJsonBody(sensor1);
   String jsonBody2 = createJsonBody(sensor2);
-
-  Serial.println(jsonBody1);
-  Serial.println(jsonBody2);
 
   PublishData(Topics::RegisterSensor, jsonBody1.c_str());
   delay(1000);
@@ -171,7 +168,6 @@ String createJsonBody(Move_Sensor sensor) {
   doc["value"] = sensor.value;
   String jsonString;
   serializeJson(doc, jsonString);
-  Serial.println(jsonString);
   return jsonString;
 }
 
@@ -194,7 +190,6 @@ String CreateSensorLogJson(SensorsLog sensorLog, String sensorName) {
 
   String jsonString;
   serializeJson(doc, jsonString);
-  Serial.println(jsonString);
   return jsonString;
 }
 
@@ -211,7 +206,6 @@ String createPeopleCountToJson(PeopleCounter peopleCounter) {
   doc["timestamp"] = GetCurrentTimeMQTT(peopleCounter.timestamp);
   String jsonString;
   serializeJson(doc, jsonString);
-  Serial.println(jsonString);
   return jsonString;
 }
 
@@ -226,7 +220,5 @@ String GetCurrentTimeMQTT(time_t timestamp) {
   localtime_r(&timestamp, &timeinfo);
   char formattedTime[20];
   strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", &timeinfo);
-  Serial.println(formattedTime);
-
   return getFormattedDateTime();
 }

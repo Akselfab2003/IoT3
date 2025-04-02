@@ -46,8 +46,6 @@ void saveToCache(Topics topic, const String& payload) {
     
     file.println(payload); // Write the payload to the file
     file.close();
-    
-    Serial.println("Data saved to cache file " + fileName);
 }
 
 /**
@@ -91,8 +89,6 @@ void publishCachedDataForTopic(Topics topic) {
          return;
     }
     
-    Serial.println("Publishing cached data from " + fileName);
-    
     // Read and publish each line from the cache file
     while (file.available()) {
          String line = file.readStringUntil('\n');
@@ -107,7 +103,6 @@ void publishCachedDataForTopic(Topics topic) {
     
     // Remove the cache file after publishing
     SPIFFS.remove(fileName);
-    Serial.println("Cleared cache file " + fileName);
 }
 
 /**

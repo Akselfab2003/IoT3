@@ -15,7 +15,7 @@ MFRC522 rfid(SS_PIN, RST_PIN);
  * Initializes the RFID reader.
  * Sets up SPI communication and initializes the RC522 module.
  */
-void setup2() {
+void InitKeycard() {
   // Initialize SPI communication with custom pins
   SPI.begin(18, 19, 23, 5); // SCK, MISO, MOSI, SS
   rfid.PCD_Init(); // Initialize the RC522 RFID reader
@@ -24,14 +24,13 @@ void setup2() {
   Serial.print("MFRC522 Software Version: ");
   rfid.PCD_DumpVersionToSerial();
   Serial.println("RC522 RFID reader initialized.");
-  Serial.println("Bring your card or fob closer to the reader...");
 }
 
 /**
  * Continuously checks for new RFID cards.
  * If a card is detected, its UID is read and published via MQTT.
  */
-void loop2() {
+void KeycardDetection() {
   // Check if a new card is present
   if (!rfid.PICC_IsNewCardPresent()) {
     // No new card detected

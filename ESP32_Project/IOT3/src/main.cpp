@@ -23,8 +23,8 @@
 
     xTaskCreate(ProcessMQTT,"ProcessMQTT", 10000, NULL, 1, NULL);
     
-    setup1();
-    setup2();
+    InitPeopleCounter();
+    InitKeycard();
 
     // Initialize the OLED display
     initializeOLED();
@@ -37,5 +37,5 @@
     //loop1();
     CheckIfPersonEntered();
 
-    loop2();  
+    KeycardDetection();
   }
