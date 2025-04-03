@@ -110,10 +110,10 @@ def get_people_counter_statistics():
     
     entered = 0
     exited = 0
-    previous_count = val[0].people
+    previous_count = 0
     
     # Calculate entered and exited counts
-    for entry in val[1:]:
+    for entry in val:
         if entry.people > previous_count:
             entered += entry.people - previous_count
         elif entry.people < previous_count:
