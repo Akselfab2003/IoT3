@@ -5,7 +5,7 @@
 
 // NTP Client setup
 WiFiUDP ntpUDP; // UDP instance for NTP communication
-NTPClient timeClient(ntpUDP, "dk.pool.ntp.org", -18000, 60000); // UTC-5 (ETC Standard Time), updates every 60 seconds
+NTPClient timeClient(ntpUDP, "dk.pool.ntp.org", 7200, 21600000); // NTP client instance with UTC+2 (7200 seconds) and 6-hour update interval
 
 /**
  * Initializes the NTP client.
@@ -16,17 +16,6 @@ void initializeNTP() {
     timeClient.begin(); // Start the NTP client
     timeClient.update(); // Perform an initial time update
     Serial.println("NTP initialized.");
-}
-
-/**
- * Gets the current time in HH:MM:SS format.
- * Updates the NTP client before retrieving the formatted time.
- * 
- * @return A string representing the current time in HH:MM:SS format.
- */
-String getFormattedTime() {
-    timeClient.update(); // Ensure the time is up-to-date
-    return timeClient.getFormattedTime(); // Returns time in HH:MM:SS format
 }
 
 /**
