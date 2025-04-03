@@ -137,65 +137,6 @@ def get_people_count():
     counts = [entry.people for entry in val]
     return {"timestamps": timestamps, "counts": counts}
 
-# WebSocket endpoint for keycard registration
-@app.websocket("/registerKeycard")
-async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
-    if session is None:
-        logger.info("No session cookie found")
-        await websocket.close()
-        return
-    
-    await websocket.accept()
-    
-    userNotdefinedMsg = {"message": "UsernameNotDefined"}
-    plsScanKeycardMsg = {"message": "PleaseScanKeycard"}
-    sessionValidatedMsg = {"message": "SessionValidated"}
-    
-    try:
-        # Prompt user to provide a username
-        await websocket.send_json(userNotdefinedMsg)
-        response = await websocket.receive_json()
-        
-        if response["username"] == "" or response["username"] is None:
-            await websocket.close()
-            return
-        else:
-            logger.info(f"Received username: {response}")
-        
-        username = response["username"]
-        logger.info(f"Username: {username}")
-        session_store[session]["username"] = username
-
-        # Prompt user to scan keycard
-        await websocket.send_json(plsScanKeycardMsg)
-        
-        response = await WaitforKeyCard()
-        logger.info(f"Received keycard: {response}")
-
-        if response is None:
-            await websocket.close()
-            return
-
-        # Prompt user to provide a username
-        logger.info(f"Received keycard: {response}")
-        newLogin = Login(username=username, keycard=response)
-        add_new_login(newLogin)
-        logger.info(f"Added new login: {newLogin}")
-        
-        # Notify session validation
-        await websocket.send_json(sessionValidatedMsg)
-        
-    except TimeoutError as e:
-        logger.error(e)
-        await websocket.send_json("{TimeoutWaiting}")
-        await websocket.close()
-    except Exception as e:
-        logger.error(e)
-        await websocket.send_json("{Error}")
-        await websocket.close()
-    finally:
-        await websocket.close()
-    
 # Route for sensor-triggered page
 @app.get("/sensors")
 def sensor_triggered(request: Request,session: str = Cookie(default=None)):
@@ -228,6 +169,7 @@ def get_sensors(request: Request,id: int,session: str = Cookie(default=None)):
     values = [entry.value for entry in sensorLogData]
     return {"timestamps": timestamps, "values": values} 
 
+# WebSocket endpoint for keycard registration
 @app.websocket("/registerKeycard")
 async def websocket_endpoint(websocket: WebSocket, session: str = Cookie(default=None)):
     if session is None:
