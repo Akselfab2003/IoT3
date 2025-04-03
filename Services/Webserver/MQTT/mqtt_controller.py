@@ -142,14 +142,26 @@ async def WaitforKeyCard():
         KeyCardClient.loop_stop()  # Stop the MQTT client loop
         KeyCardClient.disconnect()  # Disconnect the MQTT client
 
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        logger.info("Connected to MQTT broker")
+        topics = [(e.value, 0) for e in Topic]
+        result, mid = client.subscribe(topics)
+        if result == mqtt.MQTT_ERR_SUCCESS:
+            logger.info("Re-subscribed to topics: %s", topics)
+        else:
+            logger.error("Failed to subscribe to topics, error code: %s", result)
+    else:
+        logger.error("Failed to connect, return code: %d", rc)
+
+
 # Function to set up the MQTT client and subscribe to topics
 def Setup():
     logger.info("Connecting to broker: " + BROKER)
-    Client = mqtt.Client() 
+    Client = mqtt.Client(clean_session=True)
+    Client.on_connect = on_connect  # Add the on_connect callback
     Client.on_message = on_message
     Client.on_disconnect = on_disconnect
     Client.enable_logger(logger)
-
     Client.connect(BROKER, PORT, 60)
-    Client.subscribe([(e.value, 0) for e in Topic])
     Client.loop_start()

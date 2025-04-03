@@ -116,10 +116,10 @@ void ProcessMQTT(void* param) {
             static unsigned long lastReconnectAttempt = 0;
             if (!client.connected() && (millis() - lastReconnectAttempt > 5000)) {
                 Serial.println("Attempting background MQTT reconnect...");
-                if (client.connect("ESP32Client")) {
+                if (client.connect("ESP32Client", "", "", 0, 0, 0, 0, true)) {
                     Serial.println("Background MQTT reconnect successful.");
                     mqtt_connected = true;
-                    vTaskDelay(pdMS_TO_TICKS(10000));
+                    //vTaskDelay(pdMS_TO_TICKS(2000));
                     publishAllCachedData();
                 }
                 lastReconnectAttempt = millis();
